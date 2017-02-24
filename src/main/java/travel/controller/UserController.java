@@ -58,10 +58,11 @@ public class UserController {
     {
       connection=connectionRepository.findPrimaryConnection(Facebook.class);
     }
+    List<Trip> trips= tripRepository.findByUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    m.addObject("trips",trips);
     m.addObject("connection",connection);
     return m;
   }
-
 
   @RequestMapping("/newtrip")
   public ModelAndView newTrip()
@@ -105,11 +106,11 @@ public class UserController {
   public String addTrip(@ModelAttribute("trip") @Valid Trip trip, BindingResult result,final RedirectAttributes redirectAttributes)
   {
 
-      trip.getStartPoint().setTrip(trip);
-      trip.getEndPoint().setTrip(trip);
-      for(PlaceStaying p: trip.getPlaceStayings())
-      {
+
+      if (trip.getPlaceStayings()!=null) {
+        for (PlaceStaying p : trip.getPlaceStayings()) {
           p.setTrip(trip);
+        }
       }
       trip.setUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
       tripRepository.save(trip);

@@ -21,9 +21,12 @@ public class PlaceStaying implements Serializable {
 
   }
   @Id
-  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private long id;
+
+  @Column(name = "place_id")
   @NotEmpty
-  private String id;
+  private String place_id;
 
   @Column(name = "name")
   @NotEmpty
@@ -37,14 +40,6 @@ public class PlaceStaying implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
   @JoinColumn(name = "trip_id")
   private Trip trip;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
   public String getName() {
     return name;
@@ -68,6 +63,22 @@ public class PlaceStaying implements Serializable {
 
   public void setDate(Date date) {
     this.date = date;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getPlace_id() {
+    return place_id;
+  }
+
+  public void setPlace_id(String place_id) {
+    this.place_id = place_id;
   }
 
   @Override

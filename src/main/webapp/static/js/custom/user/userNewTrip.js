@@ -74,7 +74,7 @@ function initMap() {
     {
         marker.setVisible(false);
         var place = autocomplete.getPlace();
-        $("#pac-input-start-id").val(place.id);
+        $("#pac-input-start-place_id").val(place.id);
         if (!place.geometry) {
             window.alert("Autocomplete's returned place contains no geometry");
             return;
@@ -101,7 +101,7 @@ function initMap() {
     {
         marker_end.setVisible(false);
         var place = autocomplete_end.getPlace();
-        $("#pac-input-end-id").val(place.id);
+        $("#pac-input-end-place_id").val(place.id);
         if (!place.geometry) {
             window.alert("Autocomplete's returned place contains no geometry");
             return;
@@ -135,12 +135,12 @@ $("#new-city").click(
     function()
     {
         $("#middle_cities").append(
-            "<br/><div class='row'><div class='form-group' id='placeStayings["+max+"]'><div class='col-md-2 text-left'><label>Intermediate city "+max+"</label></div><input id='place-staying-"+max+"-id' name='placeStayings["+max+"].id' class='form-control' type='hidden'><div class='col-md-5'><input id='place-staying-"+max+"-name' name='placeStayings["+max+"].name' class='form-control' type='text'></div><div class='col-md-5'><input id='place-staying-"+max+"-date' name='placeStayings["+max+"].date' class='form-control' type='date'></div></div></div>"
+            "<br/><div class='row'><div class='form-group' id='placeStayings["+max+"]'><div class='col-md-2 text-left ><label>Intermediate city "+max+"</label></div><input id='place-staying-"+max+"-place_id' name='placeStayings["+max+"].place_id' class='form-control' type='hidden'><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-name' name='placeStayings["+max+"].name' class='form-control' type='text'><span class='input-group-addon'><i class='glyphicon glyphicon-plane'></i></span></div></div><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-date' name='placeStayings["+max+"].date' class='form-control' type='date'><span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span></div></div></div></div>"
                 );
         var input = /** @type {!HTMLInputElement} */(
             document.getElementById("place-staying-"+max+"-name"));
 
-        var local= "#place-staying-"+max+"-id";
+        var local= "#place-staying-"+max+"-place_id";
         var autocomplete = new google.maps.places.Autocomplete(input);
 
         var marker = new google.maps.Marker({

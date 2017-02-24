@@ -36,8 +36,12 @@ public class Trip implements Serializable{
         this.user_id = user_id;
     }
 
-    @Column(name = "user_id")
+  @Column(name = "user_id")
   private String user_id;
+
+  @Column(name = "title")
+  @NotNull
+  private String title;
 
   @OneToOne(cascade = CascadeType.ALL)
   @Valid
@@ -54,10 +58,7 @@ public class Trip implements Serializable{
   protected  Trip(){}
 
   public Trip(PlaceStaying startPoint, PlaceStaying endPoint, List<PlaceStaying> placeStayings) {
-    this.startPoint = startPoint;
-    startPoint.setTrip(this);
-    this.endPoint = endPoint;
-    endPoint.setTrip(this);
+
     this.placeStayings = placeStayings;
     for (PlaceStaying op : placeStayings) {
       op.setTrip(this);
@@ -96,5 +97,13 @@ public class Trip implements Serializable{
             ", endPoint=" + endPoint +
             ", placeStayings=" + placeStayings +
             '}';
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 }

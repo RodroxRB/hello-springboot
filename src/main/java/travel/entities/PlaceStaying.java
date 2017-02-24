@@ -32,6 +32,14 @@ public class PlaceStaying implements Serializable {
   @NotEmpty
   private String name;
 
+  @Column(name = "lat")
+  @NotNull
+  private float lat;
+
+  @Column(name = "lon")
+  @NotNull
+  private float lon;
+
   @Column(name = "date")
   @DateTimeFormat(pattern="yyyy-MM-dd")
   @NotNull
@@ -89,5 +97,21 @@ public class PlaceStaying implements Serializable {
             ", date=" + date +
 
             '}';
+  }
+
+  public float getLat() {
+    return lat;
+  }
+
+  public void setLat(float lat) {
+    this.lat = lat;
+  }
+
+  public float getLon() {
+    return lon;
+  }
+
+  public void setLon(float lon) {
+    this.lon = lon;
   }
 }

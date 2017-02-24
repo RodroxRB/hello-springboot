@@ -76,10 +76,10 @@ function initMap() {
         var place = autocomplete.getPlace();
         $("#pac-input-start-place_id").val(place.id);
         if (!place.geometry) {
-            window.alert("Autocomplete's returned place contains no geometry");
             return;
         }
-
+        $("#pac-input-start-lat").val(place.geometry.location.lat())
+        $("#pac-input-start-lon").val(place.geometry.location.lng())
         // If the place has a geometry, then present it on a map.
         if (place.geometry.viewport) {
             map.fitBounds(place.geometry.viewport);
@@ -103,9 +103,10 @@ function initMap() {
         var place = autocomplete_end.getPlace();
         $("#pac-input-end-place_id").val(place.id);
         if (!place.geometry) {
-            window.alert("Autocomplete's returned place contains no geometry");
             return;
         }
+        $("#pac-input-end-lat").val(place.geometry.location.lat())
+        $("#pac-input-end-lon").val(place.geometry.location.lng())
 
         // If the place has a geometry, then present it on a map.
         if (place.geometry.viewport) {
@@ -135,12 +136,14 @@ $("#new-city").click(
     function()
     {
         $("#middle_cities").append(
-            "<br/><div class='row'><div class='form-group' id='placeStayings["+max+"]'><div class='col-md-2 text-left ><label>Intermediate city "+max+"</label></div><input id='place-staying-"+max+"-place_id' name='placeStayings["+max+"].place_id' class='form-control' type='hidden'><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-name' name='placeStayings["+max+"].name' class='form-control' type='text'><span class='input-group-addon'><i class='glyphicon glyphicon-plane'></i></span></div></div><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-date' name='placeStayings["+max+"].date' class='form-control' type='date'><span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span></div></div></div></div>"
+            "<br/><div class='row'><div class='form-group' id='placeStayings["+max+"]'><div class='col-md-2 text-left'><label>Intermediate city "+max+"</label></div><input id='place-staying-"+max+"-place_id' name='placeStayings["+max+"].place_id' class='form-control' type='hidden'><input id='place-staying-"+max+"-lat' name='placeStayings["+max+"].lat' class='form-control' type='hidden'><input id='place-staying-"+max+"-lon' name='placeStayings["+max+"].lon' class='form-control' type='hidden'><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-name' name='placeStayings["+max+"].name' class='form-control' type='text'><span class='input-group-addon'><i class='glyphicon glyphicon-plane'></i></span></div></div><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-date' name='placeStayings["+max+"].date' class='form-control' type='date'><span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span></div></div></div></div>"
                 );
         var input = /** @type {!HTMLInputElement} */(
             document.getElementById("place-staying-"+max+"-name"));
 
         var local= "#place-staying-"+max+"-place_id";
+        var lat= "#place-staying-"+max+"-lat";
+        var lon= "#place-staying-"+max+"-lon";
         var autocomplete = new google.maps.places.Autocomplete(input);
 
         var marker = new google.maps.Marker({
@@ -157,7 +160,8 @@ $("#new-city").click(
             if (!place.geometry) {
                 return;
             }
-
+            $(lat).val(place.geometry.location.lat())
+            $(lon).val(place.geometry.location.lng())
             // If the place has a geometry, then present it on a map.
             if (place.geometry.viewport) {
                 map.fitBounds(place.geometry.viewport);

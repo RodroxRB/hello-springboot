@@ -36,6 +36,12 @@
                                 type="hidden"/>
                     <span class="help-inline"><form:errors path="startPoint.place_id"
                                                            cssclass="error"></form:errors></span>
+                    <form:input cssClass="form-control" path="startPoint.lat" id="pac-input-start-lat"
+                                class="controls"
+                                type="hidden"/>
+                    <form:input cssClass="form-control" path="startPoint.lon" id="pac-input-start-lon"
+                                class="controls"
+                                type="hidden"/>
                 </div>
                 <div class="col-md-5">
                     <div class="control-group center-block" id="startPoint.name">
@@ -65,6 +71,12 @@
                     <label>Finishing city</label>
                 </div>
                 <form:input cssClass="form-control" path="endPoint.place_id" id="pac-input-end-place_id"
+                            class="controls"
+                            type="hidden"/>
+                <form:input cssClass="form-control" path="endPoint.lat" id="pac-input-end-lat"
+                            class="controls"
+                            type="hidden"/>
+                <form:input cssClass="form-control" path="endPoint.lon" id="pac-input-end-lon"
                             class="controls"
                             type="hidden"/>
                 <div class="col-md-5">

@@ -54,7 +54,6 @@ public class PlaceController {
 
         HttpResponse response = httpClient.execute(getRequest);
         String resp = convertStreamToString(response.getEntity().getContent());
-        System.out.println(text);
         System.out.println(resp);
 
       } catch (ClientProtocolException e) {

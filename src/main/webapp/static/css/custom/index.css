@@ -8,10 +8,6 @@ body{
     background: lightblue;
 }
 
-div.well{
-    height: 250px;
-}
-
 .Absolute-Center {
     margin: auto;
     position: absolute;

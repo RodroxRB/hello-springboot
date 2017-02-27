@@ -26,8 +26,8 @@
                     </div>
                     <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
                         <div class="btn-group" role="group">
-                            <button type="button" id="stars" class="btn btn-primary" href="#tab1" data-toggle="tab"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <div class="hidden-xs">Stars</div>
+                            <button type="button" id="stars" class="btn btn-primary" href="#restaurants" data-toggle="tab"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                                <div class="hidden-xs">Restaurants</div>
                             </button>
                         </div>
                         <div class="btn-group" role="group">
@@ -44,8 +44,13 @@
 
                     <div class="well">
                         <div class="tab-content">
-                            <div class="tab-pane fade in active" id="tab1">
-                                <h3>This is tab 1</h3>
+                            <div class="tab-pane fade in active">
+                                <div class="row" id="restaurants-${listValue.startPoint.id}"></div>
+                                <c:forEach var="point" items="${listValue.placeStayings}">
+                                    <div class="row" id="restaurants-${point.id}"></div>
+                                </c:forEach>
+                                <div class="row" id="restaurants-${listValue.endPoint.id}"></div>
+
                             </div>
                             <div class="tab-pane fade in" id="tab2">
                                 <h3>This is tab 2</h3>

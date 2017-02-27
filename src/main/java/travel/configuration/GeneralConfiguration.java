@@ -7,34 +7,16 @@ import org.springframework.context.annotation.Configuration;
  * Created by BARCO on 16-Feb-17.
  */
 @Configuration
-@ConfigurationProperties(prefix = "maps")
+@ConfigurationProperties(prefix = "google")
 public class GeneralConfiguration {
 
-  private String airports;
-  private String apiIp;
-  private String accessToken;
+  private String apikey;
 
-  public String getAirports() {
-    return airports;
+  public String getApikey() {
+    return apikey;
   }
 
-  public void setAirports(String airports) {
-    this.airports = airports;
-  }
-
-  public String getApiIp() {
-    return apiIp;
-  }
-
-  public void setApiIp(String apiIp) {
-    this.apiIp = apiIp;
-  }
-
-  public String getAccessToken() {
-    return accessToken;
-  }
-
-  public void setAccessToken(String accessToken) {
-    this.accessToken = accessToken;
+  public void setApikey(String apikey) {
+    this.apikey = apikey;
   }
 }

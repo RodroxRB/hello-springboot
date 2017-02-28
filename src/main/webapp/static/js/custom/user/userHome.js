@@ -20,6 +20,10 @@ $(document).ready(function() {
         }
     }, 'json');
 
+    $.get('/place/flightsAjax.json', function(response) {
+        console.log(response);
+    }, 'json');
+
 });
 
 
@@ -40,7 +44,11 @@ function configure_restaurants(city_name,restaurants)
         $("#restaurants-" + city_name).append("There are no restaurants for the specified city");
     }
 }
-
+/*
 $(".timeline-icon").click(function () {
     $(this).closest('.timeline-entry-inner').find('.timeline-label').toggleClass('hidden');
 });
+*/
+$('.main-toggle').change(function() {
+    $(this).closest('.panel').find('.panel-body').toggleClass('hidden');
+})

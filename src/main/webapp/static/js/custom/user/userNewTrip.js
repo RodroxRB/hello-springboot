@@ -1,5 +1,12 @@
 var max=0;
 var map;
+var options = {
+    types: ['(cities)']
+};
+var markers=[];
+var end_marker=[];
+var flightPlanCoordinates = [];
+var flightPath;
 
 function collectFormData(fields) {
     var data = {};
@@ -8,6 +15,25 @@ function collectFormData(fields) {
         data[$item.attr('name')] = $item.val();
     }
     return data;
+}
+
+function updateLine() {
+    flightPlanCoordinates = [];
+    if (flightPath!=null)
+        flightPath.setMap(null);
+    for (i = 0; i < markers.length; i++) {
+        flightPlanCoordinates.push({"lat":markers[i].getPosition().lat(),lng:markers[i].getPosition().lng()});
+    }
+    console.log(flightPlanCoordinates);
+    flightPath = new google.maps.Polyline({
+        path: flightPlanCoordinates,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
+
+    flightPath.setMap(map);
 }
 
 $(document).ready(function() {
@@ -43,7 +69,7 @@ $(document).ready(function() {
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: -33.8688, lng: 151.2195},
-        zoom: 3
+        zoom: 2
     });
 
     //Add elements to
@@ -51,24 +77,26 @@ function initMap() {
         document.getElementById('pac-input-start-name'));
 
 
-    var autocomplete = new google.maps.places.Autocomplete(input);
+    var autocomplete = new google.maps.places.Autocomplete(input,options);
 
     var input_end = /** @type {!HTMLInputElement} */(
         document.getElementById('pac-input-end-name'));
 
 
-    var autocomplete_end = new google.maps.places.Autocomplete(input_end);
+    var autocomplete_end = new google.maps.places.Autocomplete(input_end,options);
 
 
     var marker = new google.maps.Marker({
         map: map,
         anchorPoint: new google.maps.Point(0, -29)
     });
+    markers.push(marker);
 
     var marker_end = new google.maps.Marker({
         map: map,
         anchorPoint: new google.maps.Point(0, -29)
     });
+    markers.push(marker_end);
 
     autocomplete.addListener('place_changed', function()
     {
@@ -81,12 +109,7 @@ function initMap() {
         $("#pac-input-start-lat").val(place.geometry.location.lat())
         $("#pac-input-start-lon").val(place.geometry.location.lng())
         // If the place has a geometry, then present it on a map.
-        if (place.geometry.viewport) {
-            map.fitBounds(place.geometry.viewport);
-        } else {
-            map.setCenter(place.geometry.location);
-            map.setZoom(3);  // Why 17? Because it looks good.
-        }
+
         marker.setIcon(/** @type {google.maps.Icon} */({
             url: place.icon,
             size: new google.maps.Size(71, 71),
@@ -96,6 +119,7 @@ function initMap() {
         }));
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
+        updateLine();
     });
     autocomplete_end.addListener('place_changed', function()
     {
@@ -108,13 +132,6 @@ function initMap() {
         $("#pac-input-end-lat").val(place.geometry.location.lat())
         $("#pac-input-end-lon").val(place.geometry.location.lng())
 
-        // If the place has a geometry, then present it on a map.
-        if (place.geometry.viewport) {
-            map.fitBounds(place.geometry.viewport);
-        } else {
-            map.setCenter(place.geometry.location);
-            map.setZoom(3);  // Why 17? Because it looks good.
-        }
         marker_end.setIcon(/** @type {google.maps.Icon} */({
             url: place.icon,
             size: new google.maps.Size(71, 71),
@@ -124,6 +141,7 @@ function initMap() {
         }));
         marker_end.setPosition(place.geometry.location);
         marker_end.setVisible(true);
+        updateLine();
     });
 
 
@@ -144,13 +162,15 @@ $("#new-city").click(
         var local= "#place-staying-"+max+"-place_id";
         var lat= "#place-staying-"+max+"-lat";
         var lon= "#place-staying-"+max+"-lon";
-        var autocomplete = new google.maps.places.Autocomplete(input);
+        var autocomplete = new google.maps.places.Autocomplete(input,options);
 
         var marker = new google.maps.Marker({
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
         });
-
+        var em=markers.pop();
+        markers.push(marker);
+        markers.push(em);
         autocomplete.addListener('place_changed', function()
         {
 
@@ -163,13 +183,7 @@ $("#new-city").click(
             $(lat).val(place.geometry.location.lat())
             $(lon).val(place.geometry.location.lng())
             // If the place has a geometry, then present it on a map.
-            if (place.geometry.viewport) {
-                map.fitBounds(place.geometry.viewport);
-            } else {
-                map.setCenter(place.geometry.location);
-                map.setZoom(3);  // Why 17? Because it looks good.
-            }
-            marker.setIcon(/** @type {google.maps.Icon} */({
+                        marker.setIcon(/** @type {google.maps.Icon} */({
                 url: place.icon,
                 size: new google.maps.Size(71, 71),
                 origin: new google.maps.Point(0, 0),
@@ -178,10 +192,12 @@ $("#new-city").click(
             }));
             marker.setPosition(place.geometry.location);
             marker.setVisible(true);
+            updateLine();
         });
 
         max=max+1;
     }
+
 
 );
 

@@ -13,7 +13,11 @@
     <c:forEach var="listValue" items="${trips}">
         <br>
         <div class="panel panel-default">
-            <div class="panel-body">
+            <div class="panel-heading">
+                ${listValue.title}
+                <input type="checkbox" class="main-toggle" data-toggle="toggle" data-on="General data" data-off="All cities">
+            </div>
+            <div class="panel-body" id="all-cities-panel">
             <div class="timeline-centered">
                 <div class="row">
                 <article class="timeline-entry">
@@ -30,7 +34,7 @@
                             <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group"
                                  aria-label="...">
                                 <div class="btn-group" role="group">
-                                    <button type="button" id="stars" class="btn btn-primary" href="#tab1"
+                                    <button type="button" id="stars" class="btn btn-primary" href="#restaurant-${listValue.startPoint.id}"
                                             data-toggle="tab"><span class="glyphicon glyphicon-menu-hamburger"
                                                                     aria-hidden="true"></span>
                                         <div class="hidden-xs">Restaurants</div>
@@ -54,7 +58,7 @@
 
                             <div class="well">
                                 <div class="tab-content">
-                                    <div class="tab-pane fade in active">
+                                    <div class="tab-pane fade in active" id="restaurant-${listValue.startPoint.id}">
                                         <div class="row" id="restaurants-${listValue.startPoint.id}"></div>
 
                                     </div>
@@ -87,7 +91,7 @@
                                 <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group"
                                      aria-label="...">
                                     <div class="btn-group" role="group">
-                                        <button type="button" id="stars" class="btn btn-primary" href="#tab1"
+                                        <button type="button" id="stars" class="btn btn-primary" href="#restaurant-${place.id}"
                                                 data-toggle="tab"><span class="glyphicon glyphicon-menu-hamburger"
                                                                         aria-hidden="true"></span>
                                             <div class="hidden-xs">Restaurants</div>
@@ -111,7 +115,7 @@
 
                                 <div class="well">
                                     <div class="tab-content">
-                                        <div class="tab-pane fade in active">
+                                        <div class="tab-pane fade in active" id="restaurant-${place.id}">
                                             <div class="row" id="restaurants-${place.id}"></div>
 
                                         </div>
@@ -144,7 +148,7 @@
                             <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group"
                                  aria-label="...">
                                 <div class="btn-group" role="group">
-                                    <button type="button" id="stars" class="btn btn-primary" href="#tab1"
+                                    <button type="button" id="stars" class="btn btn-primary" href="#restaurant-${listValue.endPoint.id}"
                                             data-toggle="tab"><span class="glyphicon glyphicon-menu-hamburger"
                                                                     aria-hidden="true"></span>
                                         <div class="hidden-xs">Restaurants</div>
@@ -168,7 +172,7 @@
 
                             <div class="well">
                                 <div class="tab-content">
-                                    <div class="tab-pane fade in active">
+                                    <div class="tab-pane fade in active" id="restaurant-${listValue.endPoint.id}">
                                         <div class="row" id="restaurants-${listValue.endPoint.id}"></div>
 
                                     </div>
@@ -189,6 +193,8 @@
             </div>
 
 
+            </div>
+            <div class="panel-body" id="general-panel" hidden>
             </div>
         </div>
     </c:forEach>
@@ -217,3 +223,4 @@
 </c:if>
 </div>
 <script src="<c:url value="/static/js/custom/user/userHome.js"/>"></script>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>

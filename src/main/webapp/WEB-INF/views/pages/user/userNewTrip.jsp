@@ -64,6 +64,11 @@
 
             </div>
         </div>
+
+
+        <div id="middle_cities">
+
+        </div>
         <br>
         <div class="row">
             <div class="form-group">
@@ -93,9 +98,6 @@
                 </div>
 
             </div>
-        </div>
-        <div id="middle_cities">
-
         </div>
         <button type="submit" class="btn btn-success">Submit</button>
     </form:form>

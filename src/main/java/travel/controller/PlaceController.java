@@ -1,6 +1,7 @@
 package travel.controller;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,6 +45,144 @@ public class PlaceController {
     this.tripRepository = tripRepository;
     this.generalConfiguration = generalConfiguration;
   }
+
+
+  @RequestMapping(value = "/flightsAjax.json")
+  public
+  @ResponseBody
+  String getFlightsInfo() {
+    List<Trip> list = tripRepository.findByUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    JSONArray big_array= new JSONArray();
+    for (Trip trip : list) {
+      JSONArray res_array= new JSONArray();
+      List<List<String>> airports= new ArrayList<>();
+      airports.add(findAirports(trip.getStartPoint()));
+      for (PlaceStaying p: trip.getPlaceStayings())
+      {
+        airports.add(findAirports(p));
+      }
+      airports.add(findAirports(trip.getEndPoint()));
+      for(int i=0;i<airports.size()-1;i++)
+      {
+          res_array.put(findFlights(airports.get(i),airports.get(i+1)));
+      }
+      big_array.put(new JSONObject().put("trip_id",trip.getId()).put("flights",res_array));
+    }
+
+
+  return new JSONObject().put("result",big_array).toString();
+  }
+
+
+  private List<String> findAirports(PlaceStaying placeStaying) {
+    try {
+      HttpClient httpClient = HttpClientBuilder.create().build();
+      String text = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
+          + URLEncoder.encode(String.valueOf(placeStaying.getLat()), "UTF-8") + ","
+          + URLEncoder.encode(String.valueOf(placeStaying.getLon()), "UTF-8")
+          + "&radius=50000&types=" + URLEncoder.encode("airport", "UTF-8")
+          + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
+
+      HttpGet getRequest = new HttpGet(text);
+
+      HttpResponse response = httpClient.execute(getRequest);
+      String resp = convertStreamToString(response.getEntity().getContent());
+      JSONObject obj = new JSONObject(resp);
+      JSONArray arr = obj.getJSONArray("results");
+      int i=0;
+      List<String> airport_codes= new ArrayList<>();
+      while (i<arr.length())
+      {
+        if (((JSONObject)arr.get(i)).getString("name").contains("International"))
+        {
+          JSONObject location=arr.getJSONObject(i).getJSONObject("geometry").getJSONObject("location");
+          String code= findAirportCode(location.getDouble("lat"),location.getDouble("lng"));
+          if (code!=null)
+            airport_codes.add(code);
+        }
+        i++;
+      }
+      return airport_codes;
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    } catch (ClientProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return new ArrayList<>();
+  }
+
+  public String findAirportCode (double lat,double lng){
+    double delta=0.01;
+    ClassLoader classLoader = getClass().getClassLoader();
+    String csvFile = "./src/resources/airports.csv";
+    String line = "";
+    String cvsSplitBy = ",";
+
+    try (BufferedReader br = new BufferedReader(new FileReader(classLoader.getResource("airports.csv").getFile()))) {
+
+      while ((line = br.readLine()) != null) {
+
+        // use comma as separator
+        String[] airport = line.split(cvsSplitBy);
+        if (Math.abs(Double.valueOf(airport[6])-lat)<delta && Math.abs(Double.valueOf(airport[7])-lng)<delta)
+        {
+          return airport[4];
+        }
+
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  private JSONObject findFlights(List<String> origin, List<String> dest) {
+    try {
+      HttpClient httpClient = HttpClientBuilder.create().build();
+      boolean found = false;
+      int i = 0;
+      int j = 0;
+      while (!found && i < origin.size() && j < dest.size()) {
+
+        String text = "https://api.test.sabre.com/v2/shop/flights/fares"
+            + "?origin="
+            + origin.get(i)
+            + "&destination="
+            + dest.get(j)
+            + "&lengthofstay=0";
+        HttpGet getRequest = new HttpGet(text);
+        getRequest.addHeader("Authorization",
+            "Bearer T1RLAQIdjw4uOTzMiBRdgtTI7zVUrDRRFBAek/Pr9wL26qdW0+01rGcSAADAdLFhjL3rkzPPQfNiRNQQ18hBHvM7CPJAP7piurJT2W/S5nFrnL5Sn9+GYcvNznayK5YZ64Hh3l9DTMaRYi1xMJwjtuPM6u2NyaUEhijobufA4sfAK+ufmGkzp78WZuFQAFsCKd0wO8Dpj/G8E/WpJ9xd5w6yOJOuJqM4lgKIZGHTHy/ZKfKT6KVGb20Yl1TtqYOPkMlC/GZtonQPKlL1z7VC0z9pbkduQSaoXXRoQRXewW2Bc0XOHu5DxT2KmZ2l");
+        HttpResponse response = httpClient.execute(getRequest);
+        if (response.getStatusLine().getStatusCode()== HttpStatus.SC_OK)
+        {
+          found=true;
+          String resp=convertStreamToString(response.getEntity().getContent());
+          JSONObject obj = new JSONObject(resp);
+          JSONArray fares= obj.getJSONArray("FareInfo");
+          JSONObject last= fares.getJSONObject(fares.length()-1);
+          last.put("Result","OK");
+          return last;
+
+        }
+        j++;
+        if (j==dest.size())
+        {
+          j=0;
+          i++;
+        }
+      }
+    } catch (ClientProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return new JSONObject().put("Result","Flights not found").put("origin_airports",origin).put("destination_airports",dest);
+  }
+
 
   @RequestMapping(value = "/googleAjax.json")
   public
@@ -86,9 +227,9 @@ public class PlaceController {
       String text = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
           + URLEncoder.encode(String.valueOf(placeStaying.getLat()), "UTF-8") + ","
           + URLEncoder.encode(String.valueOf(placeStaying.getLon()), "UTF-8")
-          + "&radius=2000&types=" + URLEncoder.encode("food|cafe|restaurant", "UTF-8")
+          + "&radius=2000&types=" + URLEncoder.encode("restaurant", "UTF-8")
           + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
-      System.out.println(text);
+
       HttpGet getRequest = new HttpGet(text);
 
       HttpResponse response = httpClient.execute(getRequest);
@@ -112,7 +253,6 @@ public class PlaceController {
       int good_ones = 0;
       JSONObject obj = null;
       JSONArray r=new JSONArray();
-      System.out.println("So far so good");
       while (good_ones < 3 && i < arr.length()) {
         obj = arr.getJSONObject(i);
         String name = obj.getString("name");
@@ -169,4 +309,9 @@ public class PlaceController {
     }
     return sb.toString();
   }
+
+
 }
+
+
+

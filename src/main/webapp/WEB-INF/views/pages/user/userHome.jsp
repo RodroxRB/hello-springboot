@@ -23,7 +23,7 @@
                 <article class="timeline-entry">
 
                     <div class="timeline-entry-inner">
-                        <time class="timeline-time" datetime="2014-01-10T03:45"><span>03:45 AM</span> <span>Today</span>
+                        <time class="timeline-time" datetime="2014-01-10T03:45"><span>${listValue.startPoint.name}</span> <span>${listValue.startPoint.date}</span>
                         </time>
                         <div class="timeline-icon bg-info">
                             <i class="entypo-feather"></i>
@@ -80,8 +80,8 @@
                     <article class="timeline-entry">
 
                         <div class="timeline-entry-inner">
-                            <time class="timeline-time" datetime="2014-01-10T03:45"><span>03:45 AM</span>
-                                <span>Today</span></time>
+                            <time class="timeline-time" datetime="2014-01-10T03:45"><span>${place.name}</span>
+                                <span>${place.date}</span></time>
                             <div class="timeline-icon bg-info">
                                 <i class="entypo-feather"></i>
                             </div>
@@ -137,7 +137,7 @@
                 <article class="timeline-entry">
 
                     <div class="timeline-entry-inner">
-                        <time class="timeline-time" datetime="2014-01-10T03:45"><span>03:45 AM</span> <span>Today</span>
+                        <time class="timeline-time" datetime="2014-01-10T03:45"><span>${listValue.endPoint.name}</span> <span>${listValue.endPoint.date}</span>
                         </time>
                         <div class="timeline-icon bg-info">
                             <i class="entypo-feather"></i>

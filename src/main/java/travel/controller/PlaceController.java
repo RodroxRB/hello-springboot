@@ -93,7 +93,7 @@ public class PlaceController {
       List<String> airport_codes= new ArrayList<>();
       while (i<arr.length())
       {
-        if (((JSONObject)arr.get(i)).getString("name").contains("International"))
+        if (((JSONObject)arr.get(i)).getString("name").contains("Airport"))
         {
           JSONObject location=arr.getJSONObject(i).getJSONObject("geometry").getJSONObject("location");
           String code= findAirportCode(location.getDouble("lat"),location.getDouble("lng"));
@@ -153,6 +153,7 @@ public class PlaceController {
             + "&destination="
             + dest.get(j)
             + "&lengthofstay=0";
+        System.out.println(text);
         HttpGet getRequest = new HttpGet(text);
         getRequest.addHeader("Authorization",
             "Bearer T1RLAQIdjw4uOTzMiBRdgtTI7zVUrDRRFBAek/Pr9wL26qdW0+01rGcSAADAdLFhjL3rkzPPQfNiRNQQ18hBHvM7CPJAP7piurJT2W/S5nFrnL5Sn9+GYcvNznayK5YZ64Hh3l9DTMaRYi1xMJwjtuPM6u2NyaUEhijobufA4sfAK+ufmGkzp78WZuFQAFsCKd0wO8Dpj/G8E/WpJ9xd5w6yOJOuJqM4lgKIZGHTHy/ZKfKT6KVGb20Yl1TtqYOPkMlC/GZtonQPKlL1z7VC0z9pbkduQSaoXXRoQRXewW2Bc0XOHu5DxT2KmZ2l");

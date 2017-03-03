@@ -40,7 +40,7 @@ public class Trip implements Serializable{
   private String user_id;
 
   @Column(name = "title")
-  @NotNull
+  @NotEmpty
   private String title;
 
   @OneToOne(cascade = CascadeType.ALL)

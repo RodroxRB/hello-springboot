@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -65,7 +66,7 @@ public class UserController {
   }
 
   @RequestMapping("/newtrip")
-  public ModelAndView newTrip()
+  public ModelAndView newTrip(Locale locale)
   {
     ModelAndView m= new ModelAndView("user/newtrip");
     String s=(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -75,6 +76,7 @@ public class UserController {
     {
       connection=connectionRepository.findPrimaryConnection(Facebook.class);
     }
+    m.addObject("locale",locale);
     m.addObject("connection",connection);
     m.addObject("trip",new Trip(new PlaceStaying(),new PlaceStaying(),new ArrayList<PlaceStaying>()));
     return m;

@@ -7,6 +7,7 @@
 --%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="container">
     </br>
     <div class="row">
@@ -19,16 +20,17 @@
         <div class="row">
 
             <div class="col-lg-4 col-lg-offset-4">
+                <spring:message code='title' var="title"/>
                 <div class="input-group">
                     <form:input cssClass="form-control" path="title"
-                                type="text" placeholder="Title"/><span class="input-group-addon"><i class="glyphicon glyphicon-book"></i></span></div>
+                                type="text" placeholder="${title}"/><span class="input-group-addon"><i class="glyphicon glyphicon-book"></i></span></div>
             </div>
         </div>
         <br>
         <div class="row">
             <div class="form-group">
                 <div class="col-md-2 text-left">
-                    <label>Starting city</label>
+                    <label><spring:message code="start_city"/></label>
                 </div>
                 <div class="control-group center-block" id="startPoint.id">
                     <form:input cssClass="form-control" path="startPoint.place_id" id="pac-input-start-place_id"
@@ -73,7 +75,7 @@
         <div class="row">
             <div class="form-group">
                 <div class="col-md-2 text-left">
-                    <label>Finishing city</label>
+                    <label><spring:message code="end_city"/></label>
                 </div>
                 <form:input cssClass="form-control" path="endPoint.place_id" id="pac-input-end-place_id"
                             class="controls"
@@ -99,10 +101,10 @@
 
             </div>
         </div>
-        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="submit" class="btn btn-success"><spring:message code="submit"/></button>
     </form:form>
-    <button class="btn btn-info" id="new-city">Add new city</button>
+    <button class="btn btn-info" id="new-city"><spring:message code="new_city"/></button>
     <script src="<c:url value="/static/js/custom/user/userNewTrip.js"/>"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUOM7XKmfD56v-ROOGe-GmoTLT6LDrOY&libraries=places&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUOM7XKmfD56v-ROOGe-GmoTLT6LDrOY&libraries=places&callback=initMap&language=<c:out value="${ locale }"/>"
             async defer></script>
 </div>

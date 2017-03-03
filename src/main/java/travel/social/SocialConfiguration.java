@@ -5,7 +5,10 @@ package travel.social;
  */
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.social.UserIdSource;
 import org.springframework.social.config.annotation.SocialConfigurer;
+import org.springframework.social.connect.UsersConnectionRepository;
+import org.springframework.social.connect.web.ReconnectFilter;
 import org.springframework.social.connect.web.SignInAdapter;
 
 import javax.sql.DataSource;
@@ -27,5 +30,10 @@ public class SocialConfiguration {
       AuthUtil.authenticate(connection);
       return null;
     };
+  }
+
+  @Bean
+  public ReconnectFilter apiExceptionHandler(UsersConnectionRepository usersConnectionRepository, UserIdSource dataSource) {
+    return new ReconnectFilter( usersConnectionRepository, dataSource) ;
   }
 }

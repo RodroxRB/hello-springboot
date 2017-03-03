@@ -52,25 +52,22 @@ public class PlaceController {
   @ResponseBody
   String getFlightsInfo() {
     List<Trip> list = tripRepository.findByUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-    JSONArray big_array= new JSONArray();
+    JSONArray big_array = new JSONArray();
     for (Trip trip : list) {
-      JSONArray res_array= new JSONArray();
-      List<List<String>> airports= new ArrayList<>();
+      JSONArray res_array = new JSONArray();
+      List<List<String>> airports = new ArrayList<>();
       airports.add(findAirports(trip.getStartPoint()));
-      for (PlaceStaying p: trip.getPlaceStayings())
-      {
+      for (PlaceStaying p : trip.getPlaceStayings()) {
         airports.add(findAirports(p));
       }
       airports.add(findAirports(trip.getEndPoint()));
-      for(int i=0;i<airports.size()-1;i++)
-      {
-          res_array.put(findFlights(airports.get(i),airports.get(i+1)));
+      for (int i = 0; i < airports.size() - 1; i++) {
+        res_array.put(findFlights(airports.get(i), airports.get(i + 1)));
       }
-      big_array.put(new JSONObject().put("trip_id",trip.getId()).put("flights",res_array));
+      big_array.put(new JSONObject().put("trip_id", trip.getId()).put("flights", res_array));
     }
 
-
-  return new JSONObject().put("result",big_array).toString();
+    return new JSONObject().put("result", big_array).toString();
   }
 
 
@@ -89,16 +86,15 @@ public class PlaceController {
       String resp = convertStreamToString(response.getEntity().getContent());
       JSONObject obj = new JSONObject(resp);
       JSONArray arr = obj.getJSONArray("results");
-      int i=0;
-      List<String> airport_codes= new ArrayList<>();
-      while (i<arr.length())
-      {
-        if (((JSONObject)arr.get(i)).getString("name").contains("Airport"))
-        {
-          JSONObject location=arr.getJSONObject(i).getJSONObject("geometry").getJSONObject("location");
-          String code= findAirportCode(location.getDouble("lat"),location.getDouble("lng"));
-          if (code!=null)
+      int i = 0;
+      List<String> airport_codes = new ArrayList<>();
+      while (i < arr.length()) {
+        if (((JSONObject) arr.get(i)).getString("name").contains("Airport")) {
+          JSONObject location = arr.getJSONObject(i).getJSONObject("geometry").getJSONObject("location");
+          String code = findAirportCode(location.getDouble("lat"), location.getDouble("lng"));
+          if (code != null) {
             airport_codes.add(code);
+          }
         }
         i++;
       }
@@ -113,8 +109,8 @@ public class PlaceController {
     return new ArrayList<>();
   }
 
-  public String findAirportCode (double lat,double lng){
-    double delta=0.01;
+  public String findAirportCode(double lat, double lng) {
+    double delta = 0.01;
     ClassLoader classLoader = getClass().getClassLoader();
     String csvFile = "./src/resources/airports.csv";
     String line = "";
@@ -126,8 +122,8 @@ public class PlaceController {
 
         // use comma as separator
         String[] airport = line.split(cvsSplitBy);
-        if (Math.abs(Double.valueOf(airport[6])-lat)<delta && Math.abs(Double.valueOf(airport[7])-lng)<delta)
-        {
+        if (Math.abs(Double.valueOf(airport[6]) - lat) < delta && Math.abs(Double.valueOf(airport[7]) - lng) < delta) {
+          System.out.println(airport[6]);
           return airport[4];
         }
 
@@ -158,21 +154,19 @@ public class PlaceController {
         getRequest.addHeader("Authorization",
             "Bearer T1RLAQIdjw4uOTzMiBRdgtTI7zVUrDRRFBAek/Pr9wL26qdW0+01rGcSAADAdLFhjL3rkzPPQfNiRNQQ18hBHvM7CPJAP7piurJT2W/S5nFrnL5Sn9+GYcvNznayK5YZ64Hh3l9DTMaRYi1xMJwjtuPM6u2NyaUEhijobufA4sfAK+ufmGkzp78WZuFQAFsCKd0wO8Dpj/G8E/WpJ9xd5w6yOJOuJqM4lgKIZGHTHy/ZKfKT6KVGb20Yl1TtqYOPkMlC/GZtonQPKlL1z7VC0z9pbkduQSaoXXRoQRXewW2Bc0XOHu5DxT2KmZ2l");
         HttpResponse response = httpClient.execute(getRequest);
-        if (response.getStatusLine().getStatusCode()== HttpStatus.SC_OK)
-        {
-          found=true;
-          String resp=convertStreamToString(response.getEntity().getContent());
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+          found = true;
+          String resp = convertStreamToString(response.getEntity().getContent());
           JSONObject obj = new JSONObject(resp);
-          JSONArray fares= obj.getJSONArray("FareInfo");
-          JSONObject last= fares.getJSONObject(fares.length()-1);
-          last.put("Result","OK");
+          JSONArray fares = obj.getJSONArray("FareInfo");
+          JSONObject last = fares.getJSONObject(fares.length() - 1);
+          last.put("Result", "OK");
           return last;
 
         }
         j++;
-        if (j==dest.size())
-        {
-          j=0;
+        if (j == dest.size()) {
+          j = 0;
           i++;
         }
       }
@@ -181,20 +175,23 @@ public class PlaceController {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return new JSONObject().put("Result","Flights not found").put("origin_airports",origin).put("destination_airports",dest);
+    return new JSONObject().put("Result", "Flights not found").put("origin_airports", origin).put("destination_airports", dest);
   }
 
 
+
+
+  //Finds information about places of interest in the cities used
   @RequestMapping(value = "/googleAjax.json")
   public
   @ResponseBody
   String getGoogleInfo() {
 
     List<Trip> list = tripRepository.findByUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-    JSONArray res_array= new JSONArray();
+    JSONArray res_array = new JSONArray();
     for (Trip trip : list) {
-      JSONArray arr_one_trip= new JSONArray();
-      JSONObject one_trip= new JSONObject();
+      JSONArray arr_one_trip = new JSONArray();
+      JSONObject one_trip = new JSONObject();
       JSONObject stp = new JSONObject()
           .put("name", trip.getStartPoint().getId())
           .put("info", getInfo(trip.getStartPoint()));
@@ -212,8 +209,8 @@ public class PlaceController {
           .put("info", getInfo(trip.getEndPoint()));
       arr_one_trip.put(endp);
 
-      one_trip.put("trip_id",trip.getId());
-      one_trip.put("results",arr_one_trip);
+      one_trip.put("trip_id", trip.getId());
+      one_trip.put("results", arr_one_trip);
       res_array.put(one_trip);
     }
 
@@ -221,16 +218,16 @@ public class PlaceController {
   }
 
   private JSONObject getInfo(PlaceStaying placeStaying) {
-    JSONArray arr=null;
-    HttpClient httpClient=null;
+    JSONArray arr = null;
+    HttpClient httpClient = null;
     try {
       httpClient = HttpClientBuilder.create().build();
       String text = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
           + URLEncoder.encode(String.valueOf(placeStaying.getLat()), "UTF-8") + ","
           + URLEncoder.encode(String.valueOf(placeStaying.getLon()), "UTF-8")
-          + "&radius=2000&types=" + URLEncoder.encode("restaurant", "UTF-8")
+          + "&radius=5000&types=" + URLEncoder.encode("restaurant|lodging", "UTF-8")
           + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
-
+      System.out.println(text);
       HttpGet getRequest = new HttpGet(text);
 
       HttpResponse response = httpClient.execute(getRequest);
@@ -244,47 +241,79 @@ public class PlaceController {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return analizeRestaurants(arr,httpClient);
+    return new JSONObject()
+        .put("restaurants", analizeRestaurants(arr, httpClient))
+        .put("hotels", analizeHotels(arr, httpClient));
   }
 
-  private JSONObject analizeRestaurants(JSONArray arr,HttpClient httpClient) {
 
-      boolean opened;
-      int i = 0;
-      int good_ones = 0;
-      JSONObject obj = null;
-      JSONArray r=new JSONArray();
-      while (good_ones < 3 && i < arr.length()) {
-        obj = arr.getJSONObject(i);
+  private JSONArray analizeRestaurants(JSONArray arr, HttpClient httpClient) {
+
+
+    int i = 0;
+    int good_ones = 0;
+    JSONObject obj = null;
+    JSONArray r = new JSONArray();
+    while (good_ones < 3 && i < arr.length()) {
+      obj = arr.getJSONObject(i);
+      if (obj.getJSONArray("types").toList().contains("restaurant") && !obj.getJSONArray("types").toList().contains("lodging")  && obj.has("photos")) {
         String name = obj.getString("name");
-        if (obj.has("opening_hours") && obj.has("photos")) {
-          opened = obj.getJSONObject("opening_hours").getBoolean("open_now");
-          JSONArray photos = obj.getJSONArray("photos");
-          int width = 0;
-          String photo_reference = "";
-          if (!photos.isNull(0)) {
-            width = ((JSONObject) photos.get(0)).getInt("width");
-            photo_reference = ((JSONObject) photos.get(0)).getString("photo_reference");
-          }
-          String text =
-              "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + width
-                  + "&photoreference=" + photo_reference
-                  + "&key=" +  generalConfiguration.getApikey();
-
-          //HttpGet getRequest = new HttpGet(text);
-          //HttpResponse response = httpClient.execute(getRequest);
-          JSONObject j= new JSONObject();
-          j.put("opened",opened);
-          j.put("name",name);
-          j.put("photo","https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + width
-              + "&photoreference=" + photo_reference
-              + "&key=" +  generalConfiguration.getApikey());
-          r.put(good_ones,j);
-          good_ones++;
+        JSONArray photos = obj.getJSONArray("photos");
+        int width = 0;
+        String photo_reference = "";
+        if (!photos.isNull(0)) {
+          width = ((JSONObject) photos.get(0)).getInt("width");
+          photo_reference = ((JSONObject) photos.get(0)).getString("photo_reference");
         }
-        i++;
+        JSONObject j = new JSONObject();
+        j.put("name", name);
+        j.put("photo", "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + width
+            + "&photoreference=" + photo_reference
+            + "&key=" + generalConfiguration.getApikey());
+        j.put("vicinity",obj.getString("vicinity"));
+        if (obj.has("rating"))
+          j.put("rating",obj.getDouble("rating"));
+        r.put(good_ones, j);
+        good_ones++;
       }
-      return new JSONObject().put("restaurants",r);
+      i++;
+    }
+    return r;
+
+  }
+
+  private JSONArray analizeHotels(JSONArray arr, HttpClient httpClient) {
+
+    boolean opened;
+    int i = 0;
+    int good_ones = 0;
+    JSONObject obj = null;
+    JSONArray r = new JSONArray();
+    while (good_ones < 3 && i < arr.length()) {
+      obj = arr.getJSONObject(i);
+      if (obj.getJSONArray("types").toList().contains("lodging") && !obj.getJSONArray("types").toList().contains("restaurant")  && obj.has("photos")) {
+        String name = obj.getString("name");
+        JSONArray photos = obj.getJSONArray("photos");
+        int width = 0;
+        String photo_reference = "";
+        if (!photos.isNull(0)) {
+          width = ((JSONObject) photos.get(0)).getInt("width");
+          photo_reference = ((JSONObject) photos.get(0)).getString("photo_reference");
+        }
+        JSONObject j = new JSONObject();
+        j.put("name", name);
+        j.put("photo", "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + width
+            + "&photoreference=" + photo_reference
+            + "&key=" + generalConfiguration.getApikey());
+        j.put("vicinity",obj.getString("vicinity"));
+        if (obj.has("rating"))
+          j.put("rating",obj.getDouble("rating"));
+        r.put(good_ones, j);
+        good_ones++;
+      }
+      i++;
+    }
+    return r;
 
   }
 

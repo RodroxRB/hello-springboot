@@ -420,7 +420,14 @@ img {
 }
 
 #inside_pictures {
-    width: 90% !important
+    width: 90% !important;
+}
+
+.image-heigth
+{
+    height: 128px !important;
+    overflow: hidden;
+
 }
 
 

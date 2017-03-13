@@ -37,7 +37,7 @@ function configure_restaurants(city_name,restaurants)
     if (len2>0) {
         for (index_restaurants = 0, len2 = restaurants.length;index_restaurants < len2; ++index_restaurants) {
             if (len2 > 0)
-                $("#restaurants-" + city_name).append("<div class='col-md-"+(12/len2)+"'><div class='row'>"+restaurants[index_restaurants].name+"</div><div class='row'><img src='"+restaurants[index_restaurants].photo+"' id='inside_pictures'/></div> </div>");
+                $("#restaurants-" + city_name).append("<div class='col-md-"+(12/len2)+"'><div class='card'><div class='image-heigth'><img class='card-img-top' src='"+restaurants[index_restaurants].photo+"' id='inside_pictures'/></div><div class='card-block'> <h4 class='card-title'>"+restaurants[index_restaurants].name+"</h4><p class='card-text'>"+restaurants[index_restaurants].vicinity+"</p><p class='card-text'>Rating: "+restaurants[index_restaurants].rating+"</p></div></div></div></div>");
         }
     }
     else
@@ -54,7 +54,7 @@ function configure_hotels(city_name,hotels)
     if (len2>0) {
         for (index_hotels = 0, len2 = hotels.length;index_hotels < len2; ++index_hotels) {
             if (len2 > 0)
-                $("#hotels-" + city_name).append("<div class='col-md-"+(12/len2)+"'><div class='row'>"+hotels[index_hotels].name+"</div><div class='row'><img src='"+hotels[index_hotels].photo+"' id='inside_pictures'/></div> </div>");
+                $("#hotels-" + city_name).append("<div class='col-md-"+(12/len2)+"'><div class='card'><div class='image-heigth'><img class='card-img-top' src='"+hotels[index_hotels].photo+"' id='inside_pictures'/></div><div class='card-block'> <h4 class='card-title'>"+hotels[index_hotels].name+"</h4><p class='card-text'>"+hotels[index_hotels].vicinity+"</p><p class='card-text'>Rating: "+hotels[index_hotels].rating+"</p></div></div></div></div>");
         }
     }
     else

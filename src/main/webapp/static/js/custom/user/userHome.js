@@ -23,7 +23,7 @@ $(document).ready(function() {
     }, 'json');
 */
     $.get('/place/flightsAjax.json', function(response) {
-        console.log(response.result);
+
         showFlights(response.result);
     }, 'json');
 

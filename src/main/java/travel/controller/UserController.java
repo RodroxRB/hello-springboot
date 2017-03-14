@@ -133,7 +133,7 @@ public class UserController {
           placeStayingRespository.save(p);
         }
       }
-      return "redirect:/user/newtrip";
+      return "redirect:/user/home";
   }
 
     @RequestMapping("/logout")

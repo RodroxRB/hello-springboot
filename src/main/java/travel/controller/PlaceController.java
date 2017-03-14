@@ -21,7 +21,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -142,6 +144,14 @@ public class PlaceController {
   }
 
   private JSONObject findFlights(List<String> origin, List<String> dest) {
+    Set<String> hs = new HashSet<>();
+    hs.addAll(origin);
+    origin.clear();
+    origin.addAll(hs);
+    hs.clear();
+    hs.addAll(dest);
+    dest.clear();
+    dest.addAll(hs);
     try {
 
       boolean found = false;

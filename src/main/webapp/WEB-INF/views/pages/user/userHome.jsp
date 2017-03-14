@@ -152,5 +152,6 @@
     </div>
     </div>
 </c:if>
+
 <script src="<c:url value="/static/js/custom/user/userHome.js"/>"></script>
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>

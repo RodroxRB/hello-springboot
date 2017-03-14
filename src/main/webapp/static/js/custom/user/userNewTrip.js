@@ -1,12 +1,11 @@
-var max=0;
+var max=2;
 var map;
 var options = {
     types: ['(cities)']
 };
-var markers=[];
-var end_marker=[];
 var flightPlanCoordinates = [];
 var flightPath;
+var markers=[];
 
 function collectFormData(fields) {
     var data = {};
@@ -18,22 +17,23 @@ function collectFormData(fields) {
 }
 
 function updateLine() {
-    flightPlanCoordinates = [];
-    if (flightPath!=null)
-        flightPath.setMap(null);
-    for (i = 0; i < markers.length; i++) {
-        flightPlanCoordinates.push({"lat":markers[i].getPosition().lat(),lng:markers[i].getPosition().lng()});
-    }
-    console.log(flightPlanCoordinates);
-    flightPath = new google.maps.Polyline({
-        path: flightPlanCoordinates,
-        geodesic: true,
-        strokeColor: '#FF0000',
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-    });
+        flightPlanCoordinates = [];
+        if (flightPath != null)
+            flightPath.setMap(null);
+        for (i = 0; i < markers.length; i++) {
+            flightPlanCoordinates.push({"lat": markers[i].getPosition().lat(), lng: markers[i].getPosition().lng()});
+        }
+        console.log(flightPlanCoordinates);
+        flightPath = new google.maps.Polyline({
+            path: flightPlanCoordinates,
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
 
-    flightPath.setMap(map);
+        flightPath.setMap(map);
+
 }
 
 $(document).ready(function() {
@@ -79,11 +79,11 @@ function initMap() {
 
     var autocomplete = new google.maps.places.Autocomplete(input,options);
 
-    var input_end = /** @type {!HTMLInputElement} */(
-        document.getElementById('pac-input-end-name'));
+    var input_second = /** @type {!HTMLInputElement} */(
+        document.getElementById('pac-input-second-name'));
 
 
-    var autocomplete_end = new google.maps.places.Autocomplete(input_end,options);
+    var autocomplete_second = new google.maps.places.Autocomplete(input_second,options);
 
 
     var marker = new google.maps.Marker({
@@ -92,11 +92,11 @@ function initMap() {
     });
     markers.push(marker);
 
-    var marker_end = new google.maps.Marker({
+    var marker_second = new google.maps.Marker({
         map: map,
         anchorPoint: new google.maps.Point(0, -29)
     });
-    markers.push(marker_end);
+    markers.push(marker_second);
 
     autocomplete.addListener('place_changed', function()
     {
@@ -121,26 +121,26 @@ function initMap() {
         marker.setVisible(true);
         updateLine();
     });
-    autocomplete_end.addListener('place_changed', function()
+    autocomplete_second.addListener('place_changed', function()
     {
-        marker_end.setVisible(false);
-        var place = autocomplete_end.getPlace();
-        $("#pac-input-end-place_id").val(place.id);
+        marker_second.setVisible(false);
+        var place = autocomplete_second.getPlace();
+        $("#pac-input-second-place_id").val(place.id);
         if (!place.geometry) {
             return;
         }
-        $("#pac-input-end-lat").val(place.geometry.location.lat())
-        $("#pac-input-end-lon").val(place.geometry.location.lng())
+        $("#pac-input-second-lat").val(place.geometry.location.lat())
+        $("#pac-input-second-lon").val(place.geometry.location.lng())
 
-        marker_end.setIcon(/** @type {google.maps.Icon} */({
+        marker_second.setIcon(/** @type {google.maps.Icon} */({
             url: place.icon,
             size: new google.maps.Size(71, 71),
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(17, 34),
             scaledSize: new google.maps.Size(35, 35)
         }));
-        marker_end.setPosition(place.geometry.location);
-        marker_end.setVisible(true);
+        marker_second.setPosition(place.geometry.location);
+        marker_second.setVisible(true);
         updateLine();
     });
 
@@ -153,8 +153,8 @@ function initMap() {
 $("#new-city").click(
     function()
     {
-        $("#middle_cities").append(
-            "<br/><div class='row'><div class='form-group' id='placeStayings["+max+"]'><div class='col-md-2 text-left'></div><input id='place-staying-"+max+"-place_id' name='placeStayings["+max+"].place_id' class='form-control' type='hidden'><input id='place-staying-"+max+"-lat' name='placeStayings["+max+"].lat' class='form-control' type='hidden'><input id='place-staying-"+max+"-lon' name='placeStayings["+max+"].lon' class='form-control' type='hidden'><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-name' name='placeStayings["+max+"].name' class='form-control' type='text'><span class='input-group-addon'><i class='glyphicon glyphicon-plane'></i></span></div></div><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-date' name='placeStayings["+max+"].date' class='form-control' type='date'><span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span></div></div></div></div>"
+        $("#next_cities").append(
+            "<br/><div class='row'><div class='form-group'><div class='col-md-2 text-left'></div><input id='place-staying-"+max+"-place_id' name='placeStayings["+max+"].place.id' class='form-control' type='hidden'><input id='place-staying-"+max+"-lat' name='placeStayings["+max+"].place.lat' class='form-control' type='hidden'><input id='place-staying-"+max+"-lon' name='placeStayings["+max+"].place.lon' class='form-control' type='hidden'><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-name' name='placeStayings["+max+"].place.name' class='form-control' type='text'><span class='input-group-addon'><i class='glyphicon glyphicon-plane'></i></span></div></div><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-date' name='placeStayings["+max+"].date' class='form-control' type='date'><span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span></div></div></div></div>"
                 );
         var input = /** @type {!HTMLInputElement} */(
             document.getElementById("place-staying-"+max+"-name"));
@@ -168,9 +168,7 @@ $("#new-city").click(
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
         });
-        var em=markers.pop();
         markers.push(marker);
-        markers.push(em);
         autocomplete.addListener('place_changed', function()
         {
 

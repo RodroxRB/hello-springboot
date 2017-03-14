@@ -5,7 +5,7 @@ $(document).ready(function() {
         $(this).removeClass("btn-default").addClass("btn-primary");
     });
 
-    $.get('/place/googleAjax.json', function(response) {
+   /* $.get('/place/googleAjax.json', function(response) {
         var index;
         for (index = 0, len = response.length; index < len; ++index) {
             trip_id=response[index].trip_id;
@@ -21,9 +21,10 @@ $(document).ready(function() {
             }
         }
     }, 'json');
-
+*/
     $.get('/place/flightsAjax.json', function(response) {
-        console.log(response);
+        console.log(response.result);
+        showFlights(response.result);
     }, 'json');
 
 });
@@ -63,12 +64,70 @@ function configure_hotels(city_name,hotels)
     }
 }
 
+function showFlights(result)
+{
+    var index_trips;
+    for (index_trips=0;index_trips<result.length;index_trips++)
+    {
+        var all_flights=result[index_trips].flights;
+        var trip_id=result[index_trips].trip_id;
+        var index_flights;
+
+        for (index_flights=0;index_flights<all_flights.length;index_flights++)
+        {
+            var flight=all_flights[index_flights];
+            var text;
+            if (flight.Result=="OK")
+            {
+                text="<div class='row'><h4>"+flight.startCity+"<span class='glyphicon glyphicon-arrow-right'></span>"+flight.endCity+"</h4></div>";
+                text+="<div class='row'><h5>"+flight.origin+"<span class='glyphicon glyphicon-arrow-right'></span>"+flight.destination+"</h5></div><br>";
+                text+="<div class='row flight-card'> Company:"+flight.Company+"</div>";
+                text+="<div class='row flight-card'> Lowest Fare:"+flight.Fare/2+"</div>";
+            }
+            else
+            {
+                text="<div class='row'><h4>"+flight.startCity+"<span class='glyphicon glyphicon-arrow-right'></span>"+flight.endCity+"</h4></div><br>";
+                text+="<div class='row flight-card'>"+flight.Result+"</div>";
+                text+="<div class='row flight-card'> Origin airports tried:"+flight.origin_airports+"</div>";
+                text+="<div class='row flight-card'> Destination airports tried:"+flight.destination_airports+"</div>";
+
+            }
+            $("#flights-" + trip_id).append("<div class='row'><div class='col-md-3'><img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkENZ3zBblMlTzJN22QEkTeD4xlfd0EsqA7K2k3hn6LzNaIPPBqZHzZWY' /></div><div class='col-md-9 ' >"+text+"</div></div>");
+
+        }
+    }
+}
 
 
-$(".timeline-icon").click(function () {
-    $(this).closest('.timeline-entry-inner').find('.timeline-label').toggleClass('hidden');
+
+$(function () {
+    $('.navbar-toggle').click(function () {
+        $('.navbar-nav').toggleClass('slide-in');
+        $('.side-body').toggleClass('body-slide-in');
+        $('#search').removeClass('in').addClass('collapse').slideUp(200);
+
+        /// uncomment code for absolute positioning tweek see top comment in css
+        //$('.absolute-wrapper').toggleClass('slide-in');
+
+    });
+
+    // Remove menu for searching
+    $('#search-trigger').click(function () {
+        $('.navbar-nav').removeClass('slide-in');
+        $('.side-body').removeClass('body-slide-in');
+
+        /// uncomment code for absolute positioning tweek see top comment in css
+        //$('.absolute-wrapper').removeClass('slide-in');
+
+    });
 });
 
-$('.main-toggle').change(function() {
-    $(this).closest('.panel').find('.panel-body').toggleClass('hidden');
-})
+$(".hidable").hide();
+
+$(".panel-shower").click(function(){
+    var id=$(this).attr("name");
+    console.log(id);
+    $(".hidable").hide();
+    $("."+id).show();
+
+});

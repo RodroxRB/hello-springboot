@@ -59,16 +59,16 @@ public class PlaceController {
   String getFlightsInfo() {
     List<Trip> list = tripRepository.findByUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     JSONArray big_array = new JSONArray();
+    List<String> city_names= new ArrayList<>();
     for (Trip trip : list) {
       JSONArray res_array = new JSONArray();
       List<List<String>> airports = new ArrayList<>();
-      airports.add(findAirports(trip.getStartPoint()));
       for (PlaceStaying p : trip.getPlaceStayings()) {
         airports.add(findAirports(p));
+        city_names.add(p.getPlace().getName());
       }
-      airports.add(findAirports(trip.getEndPoint()));
       for (int i = 0; i < airports.size() - 1; i++) {
-        res_array.put(findFlights(airports.get(i), airports.get(i + 1)));
+        res_array.put(findFlights(airports.get(i), airports.get(i + 1)).put("startCity",city_names.get(i)).put("endCity",city_names.get(i+1)));
       }
       big_array.put(new JSONObject().put("trip_id", trip.getId()).put("flights", res_array));
     }
@@ -81,8 +81,8 @@ public class PlaceController {
     try {
       HttpClient httpClient = HttpClientBuilder.create().build();
       String text = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
-          + URLEncoder.encode(String.valueOf(placeStaying.getLat()), "UTF-8") + ","
-          + URLEncoder.encode(String.valueOf(placeStaying.getLon()), "UTF-8")
+          + URLEncoder.encode(String.valueOf(placeStaying.getPlace().getLat()), "UTF-8") + ","
+          + URLEncoder.encode(String.valueOf(placeStaying.getPlace().getLon()), "UTF-8")
           + "&radius=50000&types=" + URLEncoder.encode("airport", "UTF-8")
           + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
 
@@ -143,44 +143,56 @@ public class PlaceController {
 
   private JSONObject findFlights(List<String> origin, List<String> dest) {
     try {
-      HttpClient httpClient = HttpClientBuilder.create().build();
+
       boolean found = false;
       int i = 0;
       int j = 0;
       int total_count=0;
-      while (!found && i < origin.size() && j < dest.size() && total_count<2) {
-
-        String text = "https://api.test.sabre.com/v2/shop/flights/fares"
-            + "?origin="
-            + origin.get(i)
-            + "&destination="
-            + dest.get(j)
-            + "&lengthofstay=0";
-        HttpGet getRequest = new HttpGet(text);
-        getRequest.addHeader("Authorization",
-            "Bearer T1RLAQLXVr3g13p1Uqd+tT9DzE61LSP6FhB/EWy+LpDjg8dwfDmEIJsYAADA8GT8VTTyLO5bUqzufQgT9RUtNERksrYTh2kY5MX+iTIKzwH8+uXxPimn/1buIGvw7B9SJ4mpROwyCTcGV0QzDzIKV+uNvHHeqFJ5xPcinJt0RvPMrKPEZvpb2r2brKIQSLcYO4NXVmcYN6/iXl8kmcW3KcQ58XNqRvClhV7Vr7CiV2S/Id9pJ/GDeplAKKX2RFhIAcuJyBzI3lXW6B/CMMXLggg2L2L2mKkir3rFn1GxcaiuXecFmtbLa/QGmVG7");
-        System.out.println(text);
-        HttpResponse response = httpClient.execute(getRequest);
-        System.out.println(response.getStatusLine());
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-          found = true;
-          String resp = Helper.convertStreamToString(response.getEntity().getContent());
-          JSONObject obj = new JSONObject(resp);
-          JSONArray fares = obj.getJSONArray("FareInfo");
-          JSONObject fare=fares.getJSONObject(fares.length() - 1);
-          JSONObject last = new JSONObject()
-              .put("Fare",fare.getJSONObject("LowestFare").getDouble("Fare"))
-              .put("Company", fare.getJSONObject("LowestFare").getJSONArray("AirlineCodes").get(0))
-              .put("origin",origin.get(i))
-              .put("destination",dest.get(j));
-          return last;
-
-        }
-        total_count++;
-        j++;
-        if (j == dest.size()) {
-          j = 0;
+      while (!found && i < origin.size()){
+        if (origin.get(i).equals("\\N")) {
           i++;
+          j = 0;
+        } else if (dest.get(j).equals("\\N")) {
+          j++;
+          if (j == dest.size()) {
+            j = 0;
+            i++;
+          }
+        } else {
+          HttpClient httpClient = HttpClientBuilder.create().build();
+          String text = "https://api.test.sabre.com/v2/shop/flights/fares"
+              + "?origin="
+              + origin.get(i)
+              + "&destination="
+              + dest.get(j)
+              + "&lengthofstay=0";
+          HttpGet getRequest = new HttpGet(text);
+          getRequest.addHeader("Authorization",
+              "Bearer T1RLAQLXVr3g13p1Uqd+tT9DzE61LSP6FhB/EWy+LpDjg8dwfDmEIJsYAADA8GT8VTTyLO5bUqzufQgT9RUtNERksrYTh2kY5MX+iTIKzwH8+uXxPimn/1buIGvw7B9SJ4mpROwyCTcGV0QzDzIKV+uNvHHeqFJ5xPcinJt0RvPMrKPEZvpb2r2brKIQSLcYO4NXVmcYN6/iXl8kmcW3KcQ58XNqRvClhV7Vr7CiV2S/Id9pJ/GDeplAKKX2RFhIAcuJyBzI3lXW6B/CMMXLggg2L2L2mKkir3rFn1GxcaiuXecFmtbLa/QGmVG7");
+          System.out.println(text);
+          HttpResponse response = httpClient.execute(getRequest);
+          System.out.println(response.getStatusLine());
+          if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            found = true;
+            String resp = Helper.convertStreamToString(response.getEntity().getContent());
+            JSONObject obj = new JSONObject(resp);
+            JSONArray fares = obj.getJSONArray("FareInfo");
+            JSONObject fare = fares.getJSONObject(fares.length() - 1);
+            JSONObject last = new JSONObject()
+                .put("Fare", fare.getJSONObject("LowestFare").getDouble("Fare"))
+                .put("Company", fare.getJSONObject("LowestFare").getJSONArray("AirlineCodes").get(0))
+                .put("origin", origin.get(i))
+                .put("destination", dest.get(j))
+                .put("Result","OK");
+            return last;
+
+          }
+          total_count++;
+          j++;
+          if (j == dest.size()) {
+            j = 0;
+            i++;
+          }
         }
       }
     } catch (ClientProtocolException e) {
@@ -206,22 +218,13 @@ public class PlaceController {
     for (Trip trip : list) {
       JSONArray arr_one_trip = new JSONArray();
       JSONObject one_trip = new JSONObject();
-      JSONObject stp = new JSONObject()
-          .put("name", trip.getStartPoint().getId())
-          .put("info", getInfo(trip.getStartPoint()));
-      arr_one_trip.put(stp);
 
       for (PlaceStaying p : trip.getPlaceStayings()) {
         JSONObject mid = new JSONObject()
-            .put("name", p.getId())
+            .put("name", p.getPlace().getId())
             .put("info", getInfo(p));
         arr_one_trip.put(mid);
       }
-
-      JSONObject endp = new JSONObject()
-          .put("name", trip.getEndPoint().getId())
-          .put("info", getInfo(trip.getEndPoint()));
-      arr_one_trip.put(endp);
 
       one_trip.put("trip_id", trip.getId());
       one_trip.put("results", arr_one_trip);
@@ -242,8 +245,8 @@ public class PlaceController {
     try {
       httpClient = HttpClientBuilder.create().build();
       String text = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
-          + URLEncoder.encode(String.valueOf(placeStaying.getLat()), "UTF-8") + ","
-          + URLEncoder.encode(String.valueOf(placeStaying.getLon()), "UTF-8")
+          + URLEncoder.encode(String.valueOf(placeStaying.getPlace().getLat()), "UTF-8") + ","
+          + URLEncoder.encode(String.valueOf(placeStaying.getPlace().getLon()), "UTF-8")
           + "&radius=5000&types=" + URLEncoder.encode("restaurant", "UTF-8")
           + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
       System.out.println(text);
@@ -259,8 +262,8 @@ public class PlaceController {
 
       httpClient = HttpClientBuilder.create().build();
       text = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
-          + URLEncoder.encode(String.valueOf(placeStaying.getLat()), "UTF-8") + ","
-          + URLEncoder.encode(String.valueOf(placeStaying.getLon()), "UTF-8")
+          + URLEncoder.encode(String.valueOf(placeStaying.getPlace().getLat()), "UTF-8") + ","
+          + URLEncoder.encode(String.valueOf(placeStaying.getPlace().getLon()), "UTF-8")
           + "&radius=5000&types=" + URLEncoder.encode("lodging", "UTF-8")
           + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
       System.out.println(text);

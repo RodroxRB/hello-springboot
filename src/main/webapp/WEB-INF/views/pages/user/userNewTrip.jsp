@@ -32,75 +32,68 @@
                 <div class="col-md-2 text-left">
                     <label><spring:message code="start_city"/></label>
                 </div>
-                <div class="control-group center-block" id="startPoint.id">
-                    <form:input cssClass="form-control" path="startPoint.place_id" id="pac-input-start-place_id"
+                <div class="control-group center-block" id="placeStayings[0].place.id">
+                    <form:input cssClass="form-control" path="placeStayings[0].place.id" id="pac-input-start-place_id"
                                 class="controls"
                                 type="hidden"/>
-                    <span class="help-inline"><form:errors path="startPoint.place_id"
-                                                           cssclass="error"></form:errors></span>
-                    <form:input cssClass="form-control" path="startPoint.lat" id="pac-input-start-lat"
+                    <form:input cssClass="form-control" path="placeStayings[0].place.lat" id="pac-input-start-lat"
                                 class="controls"
                                 type="hidden"/>
-                    <form:input cssClass="form-control" path="startPoint.lon" id="pac-input-start-lon"
+                    <form:input cssClass="form-control" path="placeStayings[0].place.lon" id="pac-input-start-lon"
                                 class="controls"
                                 type="hidden"/>
                 </div>
                 <div class="col-md-5">
-                    <div class="control-group center-block" id="startPoint.name">
-                        <div class="input-group"><form:input cssClass="form-control center-block" path="startPoint.name"
+                    <div class="control-group center-block" id="placeStayings[0].place.name">
+                        <div class="input-group"><form:input cssClass="form-control center-block" path="placeStayings[0].place.name"
                                     id="pac-input-start-name"
                                     class="controls" type="text"/><span class="input-group-addon"><i class="glyphicon glyphicon-plane"></i></span></div>
-                        <span class="help-inline"><form:errors path="startPoint.name"
-                                                               cssclass="error"></form:errors></span>
                     </div>
                 </div>
 
                 <div class="col-md-5">
-                    <div class="control-group center-block" id="startPoint.date">
-                        <div class="input-group"><form:input cssClass="form-control" path="startPoint.date" id="pac-input-start-date"
+                    <div class="control-group center-block" id="placeStayings[0].date">
+                        <div class="input-group"><form:input cssClass="form-control" path="placeStayings[0].date" id="pac-input-start-date"
                                     class="controls" type="date"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
-                        <span class="help-inline"><form:errors path="startPoint.date"
-                                                               cssclass="error"></form:errors></span>
                     </div>
                 </div>
 
             </div>
         </div>
 
-
-        <div id="middle_cities">
-
-        </div>
-        <br>
         <div class="row">
             <div class="form-group">
                 <div class="col-md-2 text-left">
                     <label><spring:message code="end_city"/></label>
                 </div>
-                <form:input cssClass="form-control" path="endPoint.place_id" id="pac-input-end-place_id"
+                <form:input cssClass="form-control" path="placeStayings[1].place.id" id="pac-input-second-place_id"
                             class="controls"
                             type="hidden"/>
-                <form:input cssClass="form-control" path="endPoint.lat" id="pac-input-end-lat"
+                <form:input cssClass="form-control" path="placeStayings[1].place.lat" id="pac-input-second-lat"
                             class="controls"
                             type="hidden"/>
-                <form:input cssClass="form-control" path="endPoint.lon" id="pac-input-end-lon"
+                <form:input cssClass="form-control" path="placeStayings[1].place.lon" id="pac-input-second-lon"
                             class="controls"
                             type="hidden"/>
                 <div class="col-md-5">
-                    <div class="input-group"><form:input cssClass="form-control" path="endPoint.name" id="pac-input-end-name"
-                                class="controls" type="text"/><span class="input-group-addon"><i class="glyphicon glyphicon-plane"></i></span></div>
+                    <div class="input-group"><form:input cssClass="form-control" path="placeStayings[1].place.name" id="pac-input-second-name"
+                                                         class="controls" type="text"/><span class="input-group-addon"><i class="glyphicon glyphicon-plane"></i></span></div>
 
-                    <span class="help-inline"> <form:errors path="endPoint.name" cssclass="error"></form:errors></span>
+
                 </div>
                 <div class="col-md-5">
-                    <div class="input-group"><form:input cssClass="form-control" path="endPoint.date" id="pac-input-end-date"
-                                class="controls" type="date"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
+                    <div class="input-group"><form:input cssClass="form-control" path="placeStayings[1].date" id="pac-input-second-date"
+                                                         class="controls" type="date"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
 
-                    <span class="help-inline"> <form:errors path="endPoint.date" cssclass="error"></form:errors></span>
                 </div>
 
             </div>
         </div>
+        <div id="next_cities">
+
+        </div>
+        <br>
+
         <button type="submit" class="btn btn-success"><spring:message code="submit"/></button>
     </form:form>
     <button class="btn btn-info" id="new-city"><spring:message code="new_city"/></button>

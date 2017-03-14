@@ -25,10 +25,14 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import travel.entities.Place;
 import travel.entities.PlaceStaying;
 import travel.entities.Trip;
 import travel.messages.ErrorMessage;
 import travel.messages.ValidationResponse;
+import travel.repositories.PlaceRespository;
+import travel.repositories.PlaceStayingRepository;
 import travel.repositories.TripRepository;
 
 /**
@@ -40,12 +44,16 @@ public class UserController {
 
   private UsersConnectionRepository usersConnectionRepository;
   private TripRepository tripRepository;
+  private PlaceRespository placeRespository;
+  private PlaceStayingRepository placeStayingRespository;
 
   @Autowired
-  public UserController(UsersConnectionRepository usersConnectionRepository,TripRepository tripRepository)
+  public UserController(UsersConnectionRepository usersConnectionRepository,TripRepository tripRepository,PlaceRespository placeRespository,PlaceStayingRepository placeStayingRespository)
   {
     this.usersConnectionRepository=usersConnectionRepository;
     this.tripRepository=tripRepository;
+    this.placeRespository=placeRespository;
+    this.placeStayingRespository=placeStayingRespository;
   }
 
   @RequestMapping("/home")
@@ -78,7 +86,7 @@ public class UserController {
     }
     m.addObject("locale",locale);
     m.addObject("connection",connection);
-    m.addObject("trip",new Trip(new PlaceStaying(),new PlaceStaying(),new ArrayList<PlaceStaying>()));
+    m.addObject("trip",new Trip(new ArrayList<PlaceStaying>()));
     return m;
   }
 
@@ -110,13 +118,22 @@ public class UserController {
 
 
       if (trip.getPlaceStayings()!=null) {
-        for (PlaceStaying p : trip.getPlaceStayings()) {
+        List<PlaceStaying> l=trip.getPlaceStayings();
+
+        trip.setPlaceStayings(null);
+        trip.setUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        tripRepository.save(trip);
+        for (PlaceStaying p : l) {
+
+          Place place=p.getPlace();
+          if (!placeRespository.exists(p.getPlace().getId()))
+            placeRespository.save(place);
           p.setTrip(trip);
+          p.setPlace(placeRespository.findOne(p.getPlace().getId()));
+          placeStayingRespository.save(p);
         }
       }
-      trip.setUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-      tripRepository.save(trip);
-      return "redirect:/user/home";
+      return "redirect:/user/newtrip";
   }
 
     @RequestMapping("/logout")

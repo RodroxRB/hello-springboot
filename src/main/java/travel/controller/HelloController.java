@@ -44,4 +44,10 @@ public class HelloController {
         }
         return "index";
     }
+
+    @RequestMapping("/ownerror")
+    public String error() {
+
+        return "error";
+    }
 }

@@ -20,22 +20,6 @@ public class Trip implements Serializable{
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
-
   @Column(name = "user_id")
   private String user_id;
 
@@ -43,21 +27,13 @@ public class Trip implements Serializable{
   @NotEmpty
   private String title;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @Valid
-  private PlaceStaying startPoint;
-
-  @OneToOne(cascade = CascadeType.ALL)
-  @Valid
-  private PlaceStaying endPoint;
-
-  @OneToMany(mappedBy = "trip",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "trip",fetch = FetchType.EAGER)
   @Valid
   private List<PlaceStaying> placeStayings;
 
   protected  Trip(){}
 
-  public Trip(PlaceStaying startPoint, PlaceStaying endPoint, List<PlaceStaying> placeStayings) {
+  public Trip(List<PlaceStaying> placeStayings) {
 
     this.placeStayings = placeStayings;
     for (PlaceStaying op : placeStayings) {
@@ -65,21 +41,6 @@ public class Trip implements Serializable{
     }
   }
 
-  public PlaceStaying getStartPoint() {
-    return startPoint;
-  }
-
-  public void setStartPoint(PlaceStaying startPoint) {
-    this.startPoint = startPoint;
-  }
-
-  public PlaceStaying getEndPoint() {
-    return endPoint;
-  }
-
-  public void setEndPoint(PlaceStaying endPoint) {
-    this.endPoint = endPoint;
-  }
 
   public List<PlaceStaying> getPlaceStayings() {
     return placeStayings;
@@ -93,8 +54,6 @@ public class Trip implements Serializable{
   public String toString() {
     return "Trip{" +
             "id=" + id +
-            ", startPoint=" + startPoint +
-            ", endPoint=" + endPoint +
             ", placeStayings=" + placeStayings +
             '}';
   }
@@ -105,5 +64,21 @@ public class Trip implements Serializable{
 
   public void setTitle(String title) {
     this.title = title;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getUser_id() {
+    return user_id;
+  }
+
+  public void setUser_id(String user_id) {
+    this.user_id = user_id;
   }
 }

@@ -158,7 +158,7 @@ public class PlaceController {
       int i = 0;
       int j = 0;
       int total_count=0;
-      while (!found && i < origin.size()){
+      while (!found && i < origin.size() && j<dest.size()){
         if (origin.get(i).equals("\\N")) {
           i++;
           j = 0;
@@ -276,7 +276,6 @@ public class PlaceController {
           + URLEncoder.encode(String.valueOf(placeStaying.getPlace().getLon()), "UTF-8")
           + "&radius=5000&types=" + URLEncoder.encode("lodging", "UTF-8")
           + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
-      System.out.println(text);
       getRequest = new HttpGet(text);
 
       response = httpClient.execute(getRequest);
@@ -297,7 +296,11 @@ public class PlaceController {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    JSONObject rta=new JSONObject().put("restaurants",restaurants).put("hotels",hotels).put("pagetoken",pagetoken);
+    JSONObject rta=new JSONObject().put("restaurants",restaurants)
+        .put("hotels",hotels)
+        .put("pagetoken",pagetoken)
+        .put("lon",placeStaying.getPlace().getLon())
+        .put("lat",placeStaying.getPlace().getLat());
 
     return rta;
 

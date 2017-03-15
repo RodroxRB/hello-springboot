@@ -30,7 +30,7 @@
         <div class="row">
             <div class="form-group">
                 <div class="col-md-2 text-left">
-                    <label><spring:message code="start_city"/></label>
+                    <label><spring:message code="insert_city"/></label>
                 </div>
                 <div class="control-group center-block" id="placeStayings[0].place.id">
                     <form:input cssClass="form-control" path="placeStayings[0].place.id" id="pac-input-start-place_id"
@@ -43,7 +43,7 @@
                                 class="controls"
                                 type="hidden"/>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-3">
                     <div class="control-group center-block" id="placeStayings[0].place.name">
                         <div class="input-group"><form:input cssClass="form-control center-block" path="placeStayings[0].place.name"
                                     id="pac-input-start-name"
@@ -51,10 +51,17 @@
                     </div>
                 </div>
 
-                <div class="col-md-5">
-                    <div class="control-group center-block" id="placeStayings[0].date">
-                        <div class="input-group"><form:input cssClass="form-control" path="placeStayings[0].date" id="pac-input-start-date"
-                                    class="controls" type="date"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
+                <div class="col-md-3">
+                    <div class="control-group center-block" id="placeStayings[0].date_arrival">
+                        <div class="input-group"><form:input cssClass="form-control" path="placeStayings[0].date_arrival" id="pac-input-start-date"
+                                    class="controls" type="date" disabled="true"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="control-group center-block" id="placeStayings[0].date_departure">
+                        <div class="input-group"><form:input cssClass="form-control" path="placeStayings[0].date_departure" id="pac-input-dep-start-date"
+                                                             class="controls" type="date"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
                     </div>
                 </div>
 
@@ -64,7 +71,6 @@
         <div class="row">
             <div class="form-group">
                 <div class="col-md-2 text-left">
-                    <label><spring:message code="end_city"/></label>
                 </div>
                 <form:input cssClass="form-control" path="placeStayings[1].place.id" id="pac-input-second-place_id"
                             class="controls"
@@ -75,15 +81,21 @@
                 <form:input cssClass="form-control" path="placeStayings[1].place.lon" id="pac-input-second-lon"
                             class="controls"
                             type="hidden"/>
-                <div class="col-md-5">
+                <div class="col-md-3">
                     <div class="input-group"><form:input cssClass="form-control" path="placeStayings[1].place.name" id="pac-input-second-name"
                                                          class="controls" type="text"/><span class="input-group-addon"><i class="glyphicon glyphicon-plane"></i></span></div>
 
 
                 </div>
-                <div class="col-md-5">
-                    <div class="input-group"><form:input cssClass="form-control" path="placeStayings[1].date" id="pac-input-second-date"
-                                                         class="controls" type="date"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>
+                <div class="col-md-3">
+                    <div class="input-group"><form:input cssClass="form-control" path="placeStayings[1].date_arrival" id="pac-input-second-date"
+                                                         class="controls" type="date"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar" ></i></span></div>
+
+                </div>
+
+                <div class="col-md-3">
+                    <div class="input-group"><form:input cssClass="form-control" path="placeStayings[1].date_departure" id="pac-input-dep-second-date"
+                                                         class="controls" type="date" disabled="true"/><span class="input-group-addon"><i class="glyphicon glyphicon-calendar" ></i></span></div>
 
                 </div>
 

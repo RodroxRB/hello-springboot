@@ -25,10 +25,12 @@ public class Place implements Serializable {
 
   @Id
   @NotEmpty
+  @NotNull
   private String id;
 
   @Column(name = "name")
   @NotEmpty
+  @NotNull
   private String name;
 
   @Column(name = "lat")

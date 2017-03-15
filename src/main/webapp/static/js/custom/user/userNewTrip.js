@@ -3,9 +3,6 @@ var map;
 var options = {
     types: ['(cities)']
 };
-var flightPlanCoordinates = [];
-var flightPath;
-var markers=[];
 
 function collectFormData(fields) {
     var data = {};
@@ -16,25 +13,13 @@ function collectFormData(fields) {
     return data;
 }
 
-function updateLine() {
-        flightPlanCoordinates = [];
-        if (flightPath != null)
-            flightPath.setMap(null);
-        for (i = 0; i < markers.length; i++) {
-            flightPlanCoordinates.push({"lat": markers[i].getPosition().lat(), lng: markers[i].getPosition().lng()});
-        }
-        console.log(flightPlanCoordinates);
-        flightPath = new google.maps.Polyline({
-            path: flightPlanCoordinates,
-            geodesic: true,
-            strokeColor: '#FF0000',
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
-
-        flightPath.setMap(map);
-
+function updateDisabled()
+{
+    $("input[id^='pac-input-dep']").attr("disabled",false);
+    $("input[id^='pac-input-dep']").last().attr("disabled",true);
 }
+
+
 
 $(document).ready(function() {
 
@@ -48,7 +33,7 @@ $(document).ready(function() {
             if (response.status == 'FAIL') {
                 $.notify.defaults({ className: "error" });
                 var item = response.errorMessageList[0];
-                console.log(item.fieldName);
+                console.log(response);
                 $.notify(item.message, { position:"bottom left" });
 
             } else {
@@ -77,6 +62,7 @@ function initMap() {
         document.getElementById('pac-input-start-name'));
 
 
+
     var autocomplete = new google.maps.places.Autocomplete(input,options);
 
     var input_second = /** @type {!HTMLInputElement} */(
@@ -86,26 +72,28 @@ function initMap() {
     var autocomplete_second = new google.maps.places.Autocomplete(input_second,options);
 
 
+
     var marker = new google.maps.Marker({
         map: map,
         anchorPoint: new google.maps.Point(0, -29)
     });
-    markers.push(marker);
 
     var marker_second = new google.maps.Marker({
         map: map,
         anchorPoint: new google.maps.Point(0, -29)
     });
-    markers.push(marker_second);
 
     autocomplete.addListener('place_changed', function()
     {
+
         marker.setVisible(false);
         var place = autocomplete.getPlace();
-        $("#pac-input-start-place_id").val(place.id);
         if (!place.geometry) {
+            $("#pac-input-start-place_id").val("");
             return;
         }
+        $("#pac-input-start-place_id").val(place.id);
+
         $("#pac-input-start-lat").val(place.geometry.location.lat())
         $("#pac-input-start-lon").val(place.geometry.location.lng())
         // If the place has a geometry, then present it on a map.
@@ -119,16 +107,17 @@ function initMap() {
         }));
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
-        updateLine();
     });
     autocomplete_second.addListener('place_changed', function()
     {
         marker_second.setVisible(false);
         var place = autocomplete_second.getPlace();
-        $("#pac-input-second-place_id").val(place.id);
         if (!place.geometry) {
+            $("#pac-input-second-place_id").val("");
             return;
         }
+        $("#pac-input-second-place_id").val(place.id);
+
         $("#pac-input-second-lat").val(place.geometry.location.lat())
         $("#pac-input-second-lon").val(place.geometry.location.lng())
 
@@ -141,8 +130,8 @@ function initMap() {
         }));
         marker_second.setPosition(place.geometry.location);
         marker_second.setVisible(true);
-        updateLine();
     });
+
 
 
 
@@ -154,8 +143,14 @@ $("#new-city").click(
     function()
     {
         $("#next_cities").append(
-            "<br/><div class='row'><div class='form-group'><div class='col-md-2 text-left'></div><input id='place-staying-"+max+"-place_id' name='placeStayings["+max+"].place.id' class='form-control' type='hidden'><input id='place-staying-"+max+"-lat' name='placeStayings["+max+"].place.lat' class='form-control' type='hidden'><input id='place-staying-"+max+"-lon' name='placeStayings["+max+"].place.lon' class='form-control' type='hidden'><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-name' name='placeStayings["+max+"].place.name' class='form-control' type='text'><span class='input-group-addon'><i class='glyphicon glyphicon-plane'></i></span></div></div><div class='col-md-5'><div class='input-group'><input id='place-staying-"+max+"-date' name='placeStayings["+max+"].date' class='form-control' type='date'><span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span></div></div></div></div>"
+            "<div class='row'><div class='form-group'><div class='col-md-2 text-left'></div><input id='place-staying-"+max+"-place_id' name='placeStayings["+max+"].place.id' class='form-control' type='hidden'><input id='place-staying-"+max+"-lat' name='placeStayings["+max+"].place.lat' class='form-control' type='hidden'><input id='place-staying-"+max+"-lon' name='placeStayings["+max+"].place.lon' class='form-control' type='hidden'><div class='col-md-3'><div class='input-group'><input id='place-staying-"+max+"-name' name='placeStayings["+max+"].place.name' class='form-control' type='text'><span class='input-group-addon'><i class='glyphicon glyphicon-plane'></i></span></div></div><div class='col-md-3'><div class='input-group'><input id='place-staying-"+max+"-date_arrival' name='placeStayings["+max+"].date_arrival' class='form-control' type='date'><span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span></div></div><div class='col-md-3'><div class='input-group'><input id='pac-input-dep-staying-"+max+"-date_departure' name='placeStayings["+max+"].date_departure' class='form-control' type='date'><span class='input-group-addon'><i class='glyphicon glyphicon-calendar'></i></span></div></div><div class='col-md-1'><button type='button' class='btn btn-danger delete-row'><span class='glyphicon glyphicon-trash'></span></button></div></div></div>"
                 );
+        $(".delete-row").click(
+            function () {
+                $(this).closest(".row").remove();
+                updateDisabled();
+            }
+        );
         var input = /** @type {!HTMLInputElement} */(
             document.getElementById("place-staying-"+max+"-name"));
 
@@ -168,16 +163,17 @@ $("#new-city").click(
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
         });
-        markers.push(marker);
         autocomplete.addListener('place_changed', function()
         {
 
             marker.setVisible(false);
             var place = autocomplete.getPlace();
-            $(local).val(place.id);
             if (!place.geometry) {
+                $(local).val("");
                 return;
             }
+            $(local).val(place.id);
+
             $(lat).val(place.geometry.location.lat())
             $(lon).val(place.geometry.location.lng())
             // If the place has a geometry, then present it on a map.
@@ -190,14 +186,26 @@ $("#new-city").click(
             }));
             marker.setPosition(place.geometry.location);
             marker.setVisible(true);
-            updateLine();
         });
 
         max=max+1;
+        updateDisabled()
     }
 
 
+
 );
+
+$("input[type=text]").keyup(
+    function()
+    {
+        console.log("entra");
+        $(this).closest(".form-group").children(".control-group").find("input").first().val("");
+
+    }
+);
+
+
 
 
 

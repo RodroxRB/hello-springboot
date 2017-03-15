@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import travel.entities.Place;
 import travel.entities.PlaceStaying;
 import travel.entities.Trip;
+import travel.entities.TripValidator;
 import travel.messages.ErrorMessage;
 import travel.messages.ValidationResponse;
 import travel.repositories.PlaceRespository;
@@ -43,17 +46,19 @@ import travel.repositories.TripRepository;
 public class UserController {
 
   private UsersConnectionRepository usersConnectionRepository;
+  private TripValidator tripValidator;
   private TripRepository tripRepository;
   private PlaceRespository placeRespository;
   private PlaceStayingRepository placeStayingRespository;
 
   @Autowired
-  public UserController(UsersConnectionRepository usersConnectionRepository,TripRepository tripRepository,PlaceRespository placeRespository,PlaceStayingRepository placeStayingRespository)
+  public UserController(UsersConnectionRepository usersConnectionRepository,TripRepository tripRepository,PlaceRespository placeRespository,PlaceStayingRepository placeStayingRespository,TripValidator tripValidator)
   {
     this.usersConnectionRepository=usersConnectionRepository;
     this.tripRepository=tripRepository;
     this.placeRespository=placeRespository;
     this.placeStayingRespository=placeStayingRespository;
+    this.tripValidator=tripValidator;
   }
 
   @RequestMapping("/home")
@@ -95,13 +100,19 @@ public class UserController {
   public @ResponseBody
   ValidationResponse checkTrip(@ModelAttribute("trip") @Valid Trip trip, BindingResult result)
   {
+
     ValidationResponse res = new ValidationResponse();
+    tripValidator.validate(trip,result);
     if(result.hasErrors()){
       res.setStatus("FAIL");
       List<FieldError> allErrors = result.getFieldErrors();
       List<ErrorMessage> errorMesages = new ArrayList<ErrorMessage>();
       for (FieldError objectError : allErrors) {
         errorMesages.add(new ErrorMessage(objectError.getField(), objectError.getField() + "  " + objectError.getDefaultMessage()));
+      }
+      for (ObjectError objectError : result.getGlobalErrors()) {
+        System.out.println(objectError);
+        errorMesages.add(new ErrorMessage("General error",objectError.getCodes()[1]));
       }
       res.setErrorMessageList(errorMesages);
 
@@ -116,21 +127,20 @@ public class UserController {
   public String addTrip(@ModelAttribute("trip") @Valid Trip trip, BindingResult result,final RedirectAttributes redirectAttributes)
   {
 
-
       if (trip.getPlaceStayings()!=null) {
         List<PlaceStaying> l=trip.getPlaceStayings();
-
         trip.setPlaceStayings(null);
         trip.setUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         tripRepository.save(trip);
         for (PlaceStaying p : l) {
-
-          Place place=p.getPlace();
-          if (!placeRespository.exists(p.getPlace().getId()))
-            placeRespository.save(place);
-          p.setTrip(trip);
-          p.setPlace(placeRespository.findOne(p.getPlace().getId()));
-          placeStayingRespository.save(p);
+          if (p.getPlace() != null) {
+            Place place = p.getPlace();
+            if (!placeRespository.exists(p.getPlace().getId()))
+              placeRespository.save(place);
+            p.setTrip(trip);
+            p.setPlace(placeRespository.findOne(p.getPlace().getId()));
+            placeStayingRespository.save(p);
+          }
         }
       }
       return "redirect:/user/home";

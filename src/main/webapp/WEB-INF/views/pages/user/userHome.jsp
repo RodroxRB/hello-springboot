@@ -32,7 +32,15 @@
 
 
     <c:forEach var="listValue" items="${trips}">
-
+        <div class="row">
+            <div class="panel panel-default hidable ${listValue.id}">
+                <div class="panel-heading">
+                        ${listValue.title} - <spring:message code="general_info"/>
+                </div>
+                <div class="panel-body" id="flights-${listValue.id}">
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="panel panel-default hidable ${listValue.id}">
                 <div class="panel-heading">
@@ -47,7 +55,7 @@
                                     <div class="timeline-entry-inner">
                                         <time class="timeline-time" datetime="2014-01-10T03:45">
                                             <span>${placeStaying.place.name}</span>
-                                            <span>${placeStaying.date}</span></time>
+                                            <span>${placeStaying.date_arrival}</span><span>${placeStaying.date_departure}</span></time>
                                         <div class="timeline-icon bg-info">
                                             <i class="entypo-feather"></i>
                                         </div>
@@ -71,18 +79,19 @@
                                                     <button type="button" class="btn btn-default"
                                                             href="#hotel-${placeStaying.place.id}"
                                                             data-toggle="tab"><span
-                                                            class="glyphicon glyphicon-heart"
+                                                            class="glyphicon glyphicon-home"
                                                             aria-hidden="true"></span>
                                                         <div class="hidden-xs"><spring:message
                                                                 code="hotels"/></div>
                                                     </button>
                                                 </div>
                                                 <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-default" href="#tab3"
+                                                    <button type="button" class="btn btn-default" href="#map-${placeStaying.place.id}"
                                                             data-toggle="tab"><span
-                                                            class="glyphicon glyphicon-user"
+                                                            class="glyphicon glyphicon-map-marker"
                                                             aria-hidden="true"></span>
-                                                        <div class="hidden-xs">Following</div>
+                                                        <div class="hidden-xs"><spring:message
+                                                                code="maps"/></div>
                                                     </button>
                                                 </div>
                                             </div>
@@ -97,8 +106,8 @@
                                                     <div class="tab-pane fade in" id="hotel-${placeStaying.place.id}">
                                                         <div class="row" id="hotels-${placeStaying.place.id}"></div>
                                                     </div>
-                                                    <div class="tab-pane fade in" id="tab3">
-                                                        <h3>This is tab 3</h3>
+                                                    <div class="tab-pane fade in" id="map-${placeStaying.place.id}">
+                                                        <div class="row" id="maps-${placeStaying.place.id}"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -118,15 +127,7 @@
 
             </div>
         </div>
-        <div class="row">
-            <div class="panel panel-default hidable ${listValue.id}">
-                <div class="panel-heading">
-                        ${listValue.title} - <spring:message code="general_info"/>
-                </div>
-                <div class="panel-body" id="flights-${listValue.id}">
-                </div>
-            </div>
-        </div>
+
     </c:forEach>
 
 

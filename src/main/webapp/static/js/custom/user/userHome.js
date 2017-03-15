@@ -5,7 +5,7 @@ $(document).ready(function() {
         $(this).removeClass("btn-default").addClass("btn-primary");
     });
 
-   /* $.get('/place/googleAjax.json', function(response) {
+    $.get('/place/googleAjax.json', function(response) {
         var index;
         for (index = 0, len = response.length; index < len; ++index) {
             trip_id=response[index].trip_id;
@@ -16,12 +16,15 @@ $(document).ready(function() {
                 var city_name= array_cities[index_cities].name;
                 var restaurants=array_cities[index_cities].info.restaurants;
                 var hotels=array_cities[index_cities].info.hotels;
-                configure_restaurants(city_name,restaurants)
-                configure_hotels(city_name,hotels)
+                var lat=array_cities[index_cities].info.lat;
+                var lon=array_cities[index_cities].info.lon;
+                configure_restaurants(city_name,restaurants);
+                configure_hotels(city_name,hotels);
+                configure_maps(city_name,lat,lon);
             }
         }
     }, 'json');
-*/
+
     $.get('/place/flightsAjax.json', function(response) {
 
         showFlights(response.result);
@@ -62,6 +65,12 @@ function configure_hotels(city_name,hotels)
     {
         $("#hotels-" + city_name).append("There are no hotels for the specified city");
     }
+}
+
+function configure_maps(city_name,lat,lon)
+{
+    $("#maps-" + city_name).append("<img src='https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lon+"&zoom=12&size=400x400&key=AIzaSyCy0EntAPTCPUdHKJX6PqjE33iaapvAyIs'/>");
+
 }
 
 function showFlights(result)

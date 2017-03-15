@@ -61,8 +61,9 @@ public class PlaceController {
   String getFlightsInfo() {
     List<Trip> list = tripRepository.findByUser_id((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     JSONArray big_array = new JSONArray();
-    List<String> city_names= new ArrayList<>();
+
     for (Trip trip : list) {
+      List<String> city_names= new ArrayList<>();
       JSONArray res_array = new JSONArray();
       List<List<String>> airports = new ArrayList<>();
       for (PlaceStaying p : trip.getPlaceStayings()) {

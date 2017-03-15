@@ -109,7 +109,7 @@
         <button type="submit" class="btn btn-success"><spring:message code="submit"/></button>
     </form:form>
     <button class="btn btn-info" id="new-city"><spring:message code="new_city"/></button>
-    <script src="<c:url value="/static/js/custom/user/userNewTrip.js"/>"></script>
+    <script src="<c:url value="/static/js/custom/user/userNewTrip.js" />"  charset="UTF-8"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUOM7XKmfD56v-ROOGe-GmoTLT6LDrOY&libraries=places&callback=initMap&language=<c:out value="${ locale }"/>"
             async defer></script>
 </div>

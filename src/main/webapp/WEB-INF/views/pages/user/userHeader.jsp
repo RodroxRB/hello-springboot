@@ -7,7 +7,8 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<a href="${requestScope['javax.servlet.forward.request_uri']}?mylocale=en">English </a> | <a href="${requestScope['javax.servlet.forward.request_uri']}?mylocale=es">Espanol </a>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<a href="${requestScope['javax.servlet.forward.request_uri']}?mylocale=en">English </a> | <a href="${requestScope['javax.servlet.forward.request_uri']}?mylocale=es">Español </a>
 <div class="container">
     <div class="row">
         <img src="${connection.imageUrl}" class="img-circle"/>

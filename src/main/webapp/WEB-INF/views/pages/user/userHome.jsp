@@ -18,8 +18,13 @@
             </div>
             <div class="panel-body">
                 <c:forEach var="listValue" items="${trips}">
+                    <div class="row">
                     <div class="panel-shower" name="${listValue.id}">
                         <li><a href="#"><span class="glyphicon glyphicon-send"></span> ${listValue.title}</a></li>
+                    </div>
+                        <button type="button" class="btn btn-default delete-trip" aria-label="Left Align" name="${listValue.id}">
+                            <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+                        </button>
                     </div>
                 </c:forEach>
             </div>

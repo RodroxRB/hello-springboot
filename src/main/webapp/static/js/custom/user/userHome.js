@@ -148,3 +148,12 @@ $(".panel-shower").click(function(){
     $("."+id).show();
 
 });
+
+$(".delete-trip").click(
+  function()
+  {
+      $.get('/place/deletetrip.json',{trip_id :$(this).attr("name")}, function(response) {
+
+      }, 'json');
+  }
+);

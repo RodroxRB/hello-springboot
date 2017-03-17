@@ -8,9 +8,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.BufferedReader;
@@ -23,6 +25,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -44,14 +47,16 @@ public class PlaceController {
 
   private TripRepository tripRepository;
   private GeneralConfiguration generalConfiguration;
+  private MessageSource messageSource;
 
   private final int TOTAL_PER_PLACE=3;
   private final int MAX_SEARCHES=3;
 
   @Inject
-  public PlaceController(TripRepository tripRepository, GeneralConfiguration generalConfiguration) {
+  public PlaceController(TripRepository tripRepository, GeneralConfiguration generalConfiguration, MessageSource messageSource) {
     this.tripRepository = tripRepository;
     this.generalConfiguration = generalConfiguration;
+    this.messageSource=messageSource;
   }
 
 
@@ -378,7 +383,19 @@ public class PlaceController {
 
   }
 
-
+  @RequestMapping(value = "/deletetrip.json")
+  public
+  @ResponseBody
+  String delete_trip(@RequestParam(value = "trip_id") long trip_id, Locale locale) {
+    if (tripRepository.exists(trip_id))
+      tripRepository.delete(trip_id);
+    JSONObject response= new JSONObject();
+    if (tripRepository.exists(trip_id))
+      response.put("Result","Error").put("Message", messageSource.getMessage("delete_error",null,locale));
+    else
+      response.put("Result","OK").put("Message", messageSource.getMessage("delete_ok",null,locale));
+    return String.valueOf(!tripRepository.exists(trip_id));
+  }
 }
 
 

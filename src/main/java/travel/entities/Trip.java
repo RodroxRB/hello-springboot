@@ -27,7 +27,7 @@ public class Trip implements Serializable{
   @NotEmpty
   private String title;
 
-  @OneToMany(mappedBy = "trip",fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "trip",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
   @Valid
   private List<PlaceStaying> placeStayings;
 

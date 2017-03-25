@@ -39,7 +39,7 @@ public class HelloController {
             !(SecurityContextHolder.getContext().getAuthentication()
                 instanceof AnonymousAuthenticationToken) )
         {
-          return "redirect:/user/home";
+          return "redirect:/user/home/";
 
         }
         return "index";

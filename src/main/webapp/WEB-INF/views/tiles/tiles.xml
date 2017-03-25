@@ -42,6 +42,10 @@
         <put-attribute name="body" value="/WEB-INF/views/pages/user/userNewTrip.jsp" />
     </definition>
 
+    <definition name="user/suggestedplaces" extends="base-user">
+        <put-attribute name="body" value="/WEB-INF/views/pages/user/userSuggestedPlaces.jsp" />
+    </definition>
+
     <definition name="error">
         <put-attribute name="body" value="/WEB-INF/views/pages/error.jsp" />
     </definition>

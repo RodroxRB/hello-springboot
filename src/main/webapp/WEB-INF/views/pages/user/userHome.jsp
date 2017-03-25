@@ -9,8 +9,9 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <br>
+
 <div class="container">
-<c:if test="${not empty trips}">
+    <c:if test="${not empty trips}">
     <div class="col-md-3">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -18,13 +19,13 @@
             </div>
             <div class="panel-body">
                 <c:forEach var="listValue" items="${trips}">
-                    <div class="row">
-                    <div class="panel-shower" name="${listValue.id}">
-                        <li><a href="#"><span class="glyphicon glyphicon-send"></span> ${listValue.title}</a></li>
-                    </div>
-                        <button type="button" class="btn btn-default delete-trip" aria-label="Left Align" name="${listValue.id}">
-                            <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
-                        </button>
+                    <div class="row ${listValue.id}">
+                        <div class="col-md-9">
+                            <div class="panel-shower" name="${listValue.id}">
+                                <li><a href="#"><span class="glyphicon glyphicon-send"></span> ${listValue.title}</a>
+                                </li>
+                            </div>
+                        </div>
                     </div>
                 </c:forEach>
             </div>
@@ -37,7 +38,7 @@
     <div class="col-md-9">
 
 
-    <c:forEach var="listValue" items="${trips}">
+        <c:forEach var="listValue" items="${trips}">
         <div class="row">
             <div class="panel panel-default hidable ${listValue.id}">
                 <div class="panel-heading">
@@ -73,6 +74,7 @@
                                                 data-toggle="tab"><span
                                                 class="glyphicon glyphicon-menu-hamburger"
                                                 aria-hidden="true"></span>
+
                                             <div class="hidden-xs"><spring:message
                                                     code="restaurants"/></div>
                                         </button>
@@ -83,6 +85,7 @@
                                                 data-toggle="tab"><span
                                                 class="glyphicon glyphicon-home"
                                                 aria-hidden="true"></span>
+
                                             <div class="hidden-xs"><spring:message
                                                     code="hotels"/></div>
                                         </button>
@@ -93,6 +96,7 @@
                                                 data-toggle="tab"><span
                                                 class="glyphicon glyphicon-map-marker"
                                                 aria-hidden="true"></span>
+
                                             <div class="hidden-xs"><spring:message
                                                     code="maps"/></div>
                                         </button>
@@ -128,31 +132,37 @@
             </div>
         </div>
 
-    </c:forEach>
+        </c:forEach>
 
 
-</c:if>
-<c:if test="${ empty trips}">
+        </c:if>
+        <c:if test="${ empty trips}">
 
-    <div class="row">
-        <p class="text-center">
-        <h2><spring:message code="no_trips"/></h2>
-        </p>
-    </div>
-    <div class="row">
-        <div class="col-lg-2 col-lg-offset-5">
+        <div class="row">
             <p class="text-center">
+
+
+            <h2><spring:message code="no_trips"/></h2>
+
+            </p>
+        </div>
+        <div class="row">
+            <div class="col-lg-2 col-lg-offset-5">
+                <p class="text-center">
+
                 <div class="btn-group btn-group-justified">
                     <div class="btn-group">
                         <a href="/user/newtrip" type="button" class="btn btn-nav">
                             <span class="glyphicon glyphicon-plane"></span>
-            <p><spring:message code="create_trip"/></p>
-            </a>
-        </div>
-    </div>
-    </div>
-    </div>
-</c:if>
 
-<script src="<c:url value="/static/js/custom/user/userHome.js"/>" charset="UTF-8"></script>
-<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js" charset="UTF-8"></script>
+                            <p><spring:message code="create_trip"/></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </c:if>
+
+        <script src="<c:url value="/static/js/custom/user/userHome.js"/>" charset="UTF-8"></script>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"
+                charset="UTF-8"></script>

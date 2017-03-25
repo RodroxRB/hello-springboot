@@ -1,14 +1,24 @@
 package travel.controller;
 
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
+import org.hibernate.validator.internal.util.privilegedactions.GetMethod;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -97,8 +103,7 @@ public class PlaceController {
       HttpGet getRequest = new HttpGet(text);
 
       HttpResponse response = httpClient.execute(getRequest);
-      String resp = Helper.convertStreamToString(response.getEntity().getContent());
-      JSONObject obj = new JSONObject(resp);
+      JSONObject obj = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
       JSONArray arr = obj.getJSONArray("results");
       int i = 0;
       List<String> airport_codes = new ArrayList<>();
@@ -126,7 +131,6 @@ public class PlaceController {
   public String findAirportCode(double lat, double lng) {
     double delta = 0.01;
     ClassLoader classLoader = getClass().getClassLoader();
-    String csvFile = "./src/resources/airports.csv";
     String line = "";
     String cvsSplitBy = ",";
 
@@ -184,14 +188,11 @@ public class PlaceController {
               + "&lengthofstay=0";
           HttpGet getRequest = new HttpGet(text);
           getRequest.addHeader("Authorization",
-              "Bearer T1RLAQLXVr3g13p1Uqd+tT9DzE61LSP6FhB/EWy+LpDjg8dwfDmEIJsYAADA8GT8VTTyLO5bUqzufQgT9RUtNERksrYTh2kY5MX+iTIKzwH8+uXxPimn/1buIGvw7B9SJ4mpROwyCTcGV0QzDzIKV+uNvHHeqFJ5xPcinJt0RvPMrKPEZvpb2r2brKIQSLcYO4NXVmcYN6/iXl8kmcW3KcQ58XNqRvClhV7Vr7CiV2S/Id9pJ/GDeplAKKX2RFhIAcuJyBzI3lXW6B/CMMXLggg2L2L2mKkir3rFn1GxcaiuXecFmtbLa/QGmVG7");
-          System.out.println(text);
+              "Bearer T1RLAQLjAsLpJ2t8y+q6dazZvhYjn3FqLhBE3wfLW8ZkFnWEGPp+dtTxAADApRpxNoYszvfdJT/ldbDiwUUSommdZb1IgY0Ib/6dPJdKJnBtFhstYRCqyem4hjWFLbRUwZ9jHZhOrRc8/WZ28JfErFi0h971COBrdAMp/4aYOaiCmliwY9SsyKsDk4+eu1pgww7bAy8Sl2SizJFl8IeRsywH15T/XED2bprQuOSj1sHCFVinvgYvGvZNWVjXxxT06MCIZXoZ/rF+GOyg0SwCBlB/0TstVjF2FcCxSvTGPZZWX9Wun1eEhThB/0zR");
+
           HttpResponse response = httpClient.execute(getRequest);
-          System.out.println(response.getStatusLine());
           if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            found = true;
-            String resp = Helper.convertStreamToString(response.getEntity().getContent());
-            JSONObject obj = new JSONObject(resp);
+            JSONObject obj = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
             JSONArray fares = obj.getJSONArray("FareInfo");
             JSONObject fare = fares.getJSONObject(fares.length() - 1);
             JSONObject last = new JSONObject()
@@ -246,7 +247,6 @@ public class PlaceController {
       one_trip.put("results", arr_one_trip);
       res_array.put(one_trip);
     }
-
     return res_array.toString();
   }
 
@@ -265,12 +265,11 @@ public class PlaceController {
           + URLEncoder.encode(String.valueOf(placeStaying.getPlace().getLon()), "UTF-8")
           + "&radius=5000&types=" + URLEncoder.encode("restaurant", "UTF-8")
           + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
-      System.out.println(text);
-      HttpGet getRequest = new HttpGet(text);
 
+
+      HttpGet getRequest = new HttpGet(text);
       HttpResponse response = httpClient.execute(getRequest);
-      String resp = Helper.convertStreamToString(response.getEntity().getContent());
-      obj = new JSONObject(resp);
+      obj = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
       arrRestaurants = obj.getJSONArray("results");
       restaurants=analizeRestaurants(arrRestaurants, httpClient);
 
@@ -285,8 +284,7 @@ public class PlaceController {
       getRequest = new HttpGet(text);
 
       response = httpClient.execute(getRequest);
-      resp = Helper.convertStreamToString(response.getEntity().getContent());
-      obj = new JSONObject(resp);
+      obj = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
       arrHotels = obj.getJSONArray("results");
       hotels=analizeHotels(arrHotels, httpClient);
 
@@ -395,6 +393,79 @@ public class PlaceController {
     else
       response.put("Result","OK").put("Message", messageSource.getMessage("delete_ok",null,locale));
     return String.valueOf(!tripRepository.exists(trip_id));
+  }
+
+
+  @RequestMapping(value = "/randomplace.json")
+  public
+  @ResponseBody
+  String random_place(Locale locale) {
+    ClassLoader classLoader = getClass().getClassLoader();
+    String line = "";
+    String cvsSplitBy = ",";
+    Random rnd = new Random();
+    JSONObject final_object=null;
+    JSONArray r=null;
+    boolean found=false;
+    while (!found) {
+      final_object = new JSONObject();
+      r = new JSONArray();
+      int city_number = rnd.nextInt(3173959);
+      try (BufferedReader br = new BufferedReader(new FileReader(classLoader.getResource("worldcitiespop.txt").getFile()))) {
+
+        for (int i = 1; i < city_number; i++)
+          br.readLine();
+        // use comma as separator
+        line = br.readLine();
+        String[] city = line.split(cvsSplitBy);
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        final_object.put("city", city[2]);
+        String text = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
+                + URLEncoder.encode(city[5], "UTF-8") + ","
+                + URLEncoder.encode(city[6], "UTF-8")
+                + "&radius=50000"
+                + "&key=" + URLEncoder.encode(generalConfiguration.getApikey(), "UTF-8");
+
+        HttpGet getRequest = new HttpGet(text);
+
+        HttpResponse response = httpClient.execute(getRequest);
+        JSONObject obj = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
+        JSONArray arr = obj.getJSONArray("results");
+        int i = 0;
+        if (arr.length()>=3) {
+          found=true;
+          while (i < arr.length()) {
+            obj = arr.getJSONObject(i);
+            if (obj.has("photos")) {
+              String name = obj.getString("name");
+              JSONArray photos = obj.getJSONArray("photos");
+              int width = 0;
+              String photo_reference = "";
+              if (!photos.isNull(0)) {
+                width = ((JSONObject) photos.get(0)).getInt("width");
+                photo_reference = ((JSONObject) photos.get(0)).getString("photo_reference");
+              }
+              JSONObject j = new JSONObject();
+              j.put("name", name);
+              j.put("photo", "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + width
+                      + "&photoreference=" + photo_reference
+                      + "&key=" + generalConfiguration.getApikey());
+              j.put("vicinity", obj.getString("vicinity"));
+              j.put("place_id", obj.getString("vicinity"));
+              if (obj.has("rating"))
+                j.put("rating", obj.getDouble("rating"));
+              r.put(j);
+            }
+            i++;
+          }
+        }
+
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+    }
+    return final_object.put("result",r).toString();
   }
 }
 

@@ -7,7 +7,7 @@
 --%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div class="container">
     </br>
@@ -107,7 +107,7 @@
         </div>
         <br>
 
-        <button type="submit" class="btn btn-success"><spring:message code="submit"/></button>
+        <button type="submit" class="btn btn-success" user-id="${connection.displayName}"><spring:message code="submit"/></button>
     </form:form>
     <button class="btn btn-info" id="new-city"><spring:message code="new_city"/></button>
     <script src="<c:url value="/static/js/custom/user/userNewTrip.js" />"  charset="UTF-8"></script>

@@ -11,7 +11,6 @@
     <title><tiles:getAsString name="title" /></title>
     <link href="<c:url value='/static/css/bootstrap.css' />"  rel="stylesheet"></link>
     <link href="<c:url value='/static/css/custom/index.css' />"  rel="stylesheet"></link>
-    <link href="<c:url value='/static/css/datepicker.css' />"  rel="stylesheet"></link>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"  charset="UTF-8"></script>
     <script src="<c:url value="/static/js/bootstrap.js"/>"  charset="UTF-8"></script>

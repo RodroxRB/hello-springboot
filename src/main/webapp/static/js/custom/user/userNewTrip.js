@@ -199,7 +199,6 @@ $("#new-city").click(
 $("input[type=text]").keyup(
     function()
     {
-        console.log("entra");
         $(this).closest(".form-group").children(".control-group").find("input").first().val("");
 
     }

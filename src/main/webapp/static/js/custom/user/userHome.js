@@ -1,10 +1,3 @@
-var utf8_to_latin1 = function (s) {
-    return unescape(encodeURIComponent(s));
-};
-var latin1_to_utf8 = function (s) {
-    return decodeURIComponent(escape(s));
-};
-
 $(document).ready(function() {
 
     $(".btn-pref .btn").click(function () {
@@ -49,7 +42,7 @@ function configure_restaurants(city_name,restaurants)
     if (len2>0) {
         for (index_restaurants = 0, len2 = restaurants.length;index_restaurants < len2; ++index_restaurants) {
             if (len2 > 0)
-                $("#restaurants-" + city_name).append("<div class='col-md-"+(12/len2)+"'><div class='card'><div class='image-heigth'><img class='card-img-top' src='"+restaurants[index_restaurants].photo+"' id='inside_pictures'/></div><div class='card-block'> <h4 class='card-title'>"+latin1_to_utf8(restaurants[index_restaurants].name)+"</h4><p class='card-text'>"+latin1_to_utf8(restaurants[index_restaurants].vicinity)+"</p><p class='card-text'>Rating: "+restaurants[index_restaurants].rating+"</p></div></div></div></div>");
+                $("#restaurants-" + city_name).append("<div class='col-md-"+(12/len2)+"'><div class='card'><div class='image-heigth'><img class='card-img-top' src='"+restaurants[index_restaurants].photo+"' id='inside_pictures'/></div><div class='card-block'> <h4 class='card-title'>"+restaurants[index_restaurants].name+"</h4><p class='card-text'>"+restaurants[index_restaurants].vicinity+"</p><p class='card-text'>Rating: "+restaurants[index_restaurants].rating+"</p></div></div></div></div>");
         }
     }
     else
@@ -64,9 +57,10 @@ function configure_hotels(city_name,hotels)
     var index_hotels;
     var len2= hotels.length;
     if (len2>0) {
-        for (index_hotels = 0, len2 = hotels.length;index_hotels < len2; ++index_hotels) {
+        for (index_hotels = 0;index_hotels < len2; ++index_hotels) {
+
             if (len2 > 0)
-                $("#hotels-" + city_name).append("<div class='col-md-"+(12/len2)+"'><div class='card'><div class='image-heigth'><img class='card-img-top' src='"+hotels[index_hotels].photo+"' id='inside_pictures'/></div><div class='card-block'> <h4 class='card-title'>"+latin1_to_utf8(hotels[index_hotels].name)+"</h4><p class='card-text'>"+latin1_to_utf8(hotels[index_hotels].vicinity)+"</p><p class='card-text'>Rating: "+hotels[index_hotels].rating+"</p></div></div></div></div>");
+                $("#hotels-" + city_name).append("<div class='col-md-"+(12/len2)+"'><div class='card'><div class='image-heigth'><img class='card-img-top' src='"+hotels[index_hotels].photo+"' id='inside_pictures'/></div><div class='card-block'> <h4 class='card-title'>"+hotels[index_hotels].name+"</h4><p class='card-text'>"+hotels[index_hotels].vicinity+"</p><p class='card-text'>Rating: "+hotels[index_hotels].rating+"</p></div></div></div></div>");
         }
     }
     else
@@ -105,8 +99,8 @@ function showFlights(result)
             {
                 text="<div class='row'><h4>"+flight.startCity+"<span class='glyphicon glyphicon-arrow-right'></span>"+flight.endCity+"</h4></div><br>";
                 text+="<div class='row flight-card'>"+flight.Result+"</div>";
-                text+="<div class='row flight-card'> Origin airports tried:"+flight.origin_airports+"</div>";
-                text+="<div class='row flight-card'> Destination airports tried:"+flight.destination_airports+"</div>";
+                text+="<div class='row flight-card'> Origin airports tried:"+flight.origin_airports.filter(function(n){ return n != "\\N" }) +"</div>";
+                text+="<div class='row flight-card'> Destination airports tried:"+flight.destination_airports.filter(function(n){ return n != "\\N" })+"</div>";
 
             }
             $("#flights-" + trip_id).append("<div class='row'><div class='col-md-3'><img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkENZ3zBblMlTzJN22QEkTeD4xlfd0EsqA7K2k3hn6LzNaIPPBqZHzZWY' /></div><div class='col-md-9 ' >"+text+"</div></div>");
@@ -152,8 +146,10 @@ $(".panel-shower").click(function(){
 $(".delete-trip").click(
   function()
   {
-      $.get('/place/deletetrip.json',{trip_id :$(this).attr("name")}, function(response) {
-
+      var trip_id=$(this).attr("name");
+      $.get('/place/deletetrip.json',{trip_id : trip_id}, function(response) {
+          console.log(trip_id);
+        $("."+trip_id).remove();
       }, 'json');
   }
 );
